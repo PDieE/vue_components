@@ -8,14 +8,14 @@ hero:
   actions:
     - theme: brand
       text: 查看组件
-      link: /components/
+      link: /components
     - theme: alt
       text: 快速开始
-      link: /guide/getting-started
+      link: /getting-started
 
 features:
-  - title: UiButton
+  - title: Button 按钮
     details: 支持多种样式、主题、尺寸、图标、加载和禁用状态。
-  - title: UiSpinner
+  - title: Spinner 加载器
     details: 轻量、可访问的加载指示器，可用类名灵活调整外观。
 ---

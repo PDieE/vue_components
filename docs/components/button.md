@@ -1,19 +1,24 @@
 ---
-title: UiButton
+title: Button 按钮
 description: 用于触发操作的按钮组件。
 ---
 
-# UiButton
+<script setup lang="ts">
+import { DownloadIcon, PlusIcon } from '@lucide/vue'
+import { ref } from 'vue'
+
+const submitting = ref(false)
+</script>
+
+# Button 按钮
 
 `UiButton` 用于触发用户操作，支持不同的视觉样式、尺寸、主题、加载状态，以及以块级按钮展示。
 
 ## 基础用法
 
-```vue
-<script setup lang="ts">
-import { Button as UiButton } from '@/components/ui/button'
-</script>
+<UiButton>确认</UiButton>
 
+```vue
 <template>
   <UiButton>确认</UiButton>
 </template>
@@ -22,6 +27,15 @@ import { Button as UiButton } from '@/components/ui/button'
 ## 样式
 
 通过 `variant` 设置按钮样式。默认值为 `default`。
+
+<div class="flex flex-wrap gap-2">
+  <UiButton variant="default">默认按钮</UiButton>
+  <UiButton variant="secondary">次要按钮</UiButton>
+  <UiButton variant="outline">描边按钮</UiButton>
+  <UiButton variant="ghost">幽灵按钮</UiButton>
+  <UiButton variant="text">文字按钮</UiButton>
+  <UiButton variant="link">链接按钮</UiButton>
+</div>
 
 ```vue
 <template>
@@ -40,6 +54,12 @@ import { Button as UiButton } from '@/components/ui/button'
 
 通过 `theme` 切换语义主题。默认主题为 `default`。
 
+<div class="flex flex-wrap gap-2">
+  <UiButton theme="default">默认</UiButton>
+  <UiButton theme="brand">品牌</UiButton>
+  <UiButton theme="destructive">危险操作</UiButton>
+</div>
+
 ```vue
 <template>
   <div class="flex flex-wrap gap-2">
@@ -55,6 +75,17 @@ import { Button as UiButton } from '@/components/ui/button'
 ## 尺寸
 
 通过 `size` 调整按钮大小。图标按钮应使用 `icon` 系列尺寸，并仅传入图标内容。
+
+<div class="flex flex-wrap items-center gap-2">
+  <UiButton size="xs">极小</UiButton>
+  <UiButton size="sm">小</UiButton>
+  <UiButton>默认</UiButton>
+  <UiButton size="lg">大</UiButton>
+  <UiButton size="icon" aria-label="新增"><PlusIcon /></UiButton>
+  <UiButton size="icon-xs" aria-label="新增"><PlusIcon /></UiButton>
+  <UiButton size="icon-sm" aria-label="新增"><PlusIcon /></UiButton>
+  <UiButton size="icon-lg" aria-label="新增"><PlusIcon /></UiButton>
+</div>
 
 ```vue
 <script setup lang="ts">
@@ -80,6 +111,11 @@ import { PlusIcon } from '@lucide/vue'
 
 使用默认插槽放置任意图标；如果图标需要固定在文字前方，也可以使用 `icon` 具名插槽。
 
+<UiButton>
+  <template #icon><DownloadIcon /></template>
+  下载
+</UiButton>
+
 ```vue
 <script setup lang="ts">
 import { DownloadIcon } from '@lucide/vue'
@@ -98,6 +134,14 @@ import { DownloadIcon } from '@lucide/vue'
 ## 加载与禁用
 
 `loading` 为 `true` 时，按钮会显示内置的 `UiSpinner`，并自动禁用；`disabled` 可单独控制禁用状态。
+
+<div class="flex flex-wrap items-center gap-2">
+  <UiButton :loading="submitting">提交</UiButton>
+  <UiButton disabled>不可用</UiButton>
+  <UiButton variant="outline" @click="submitting = !submitting">
+    {{ submitting ? '停止加载' : '切换加载状态' }}
+  </UiButton>
+</div>
 
 ```vue
 <script setup lang="ts">
@@ -120,6 +164,8 @@ const submitting = ref(false)
 
 设置 `block` 使按钮占满父容器宽度。
 
+<div class="max-w-sm"><UiButton block>保存</UiButton></div>
+
 ```vue
 <template>
   <UiButton block>保存</UiButton>
@@ -130,14 +176,19 @@ const submitting = ref(false)
 
 组件继承 Reka UI 的 `Primitive` 属性，可通过 `as` 渲染为其他 HTML 元素，或用 `as-child` 将行为和样式合并到子元素。
 
+<div class="flex flex-wrap gap-2">
+  <UiButton as="a" href="/getting-started">开始使用</UiButton>
+  <UiButton as-child><a href="/getting-started">开始使用</a></UiButton>
+</div>
+
 ```vue
 <template>
-  <UiButton as="a" href="/guide/getting-started">
+  <UiButton as="a" href="/getting-started">
     开始使用
   </UiButton>
 
   <UiButton as-child>
-    <a href="/guide/getting-started">开始使用</a>
+    <a href="/getting-started">开始使用</a>
   </UiButton>
 </template>
 ```
