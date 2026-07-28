@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  /* 重置@iconify/vue的样式 */
+  svg.iconify,
+  span.iconify {
+    display: inline-block;
+  }
+
+  /* 重置@ant-design/icons-vue的样式 */
+  .anticon {
+    display: inline-flex !important;
+  }
+
+  /* 恢复按钮pointer */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* shadcn-vue Start */
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* shadcn-vue End */
+}
+
+@theme {
+  --color-quaternary: var(--color-text-quaternary);
+  --color-separator: var(--separator);
+  --color-hover: var(--hover);
+  --color-disabled: var(--disabled);
+
+  /* 品牌色 */
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-disable: var(--brand-disable);
+  --color-brand-active: var(--brand-active);
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-bg-hover: var(--brand-bg-hover);
+
+  /* 边框颜色 */
+  --color-layout: var(--layout);
+  --color-layout-light: var(--layout-light);
+
+  --color-mask: var(--color-bg-mask);
+  --color-primary-border-hover: var(--color-primary-border-hover);
+
+  /* 字体颜色 */
+  --color-foreground-2: var(--foreground-2);
+  --color-foreground-3: var(--foreground-3);
+  --color-foreground-4: var(--foreground-4);
+
+  /* 蓝色 */
+  --color-blue: var(--blue);
+  --color-blue-foreground: var(--blue-foreground);
+  --color-blue-border: var(--blue-border);
+
+  /* 紫色 */
+  --color-purple: var(--purple);
+  --color-purple-foreground: var(--purple-foreground);
+  --color-purple-border: var(--purple-border);
+
+  /* 成功色 */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-border: var(--success-border);
+
+  /* 警告色 */
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-border: var(--warning-border);
+
+  /* 错误色 */
+  --color-error: var(--error);
+  --color-error-hover: var(--error-hover);
+  --color-error-disable: var(--error-disable);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-border: var(--error-border);
+}
+
+/* shadcn-vue Start */
+@theme inline {
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px); */
+}
+/* shadcn-vue End */
+
+:root {
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --separator: oklch(96.584% 0.00921 258.494); /** #F0F4FA */
+  --hover: oklch(96.348% 0.00466 258.631); /** #F1F3F6 */
+  --disabled: oklch(98.415% 0.00352 248.585); /** #F8FAFC */
+
+  /* 品牌色 */
+  --brand: oklch(59.315% 0.22124 263.389); /* #3371FF */
+  --brand-hover: oklch(62.692% 0.20062 262.195); /* #4080FF */
+  --brand-disable: oklch(79.799% 0.10262 258.166); /* #94BFFF */
+  --brand-active: oklch(45.826% 0.22554 263.927); /* #0E42D2 */
+  --brand-bg: oklch(96.731% 0.01543 270.001); /* #F0F4FF */
+  --brand-bg-hover: oklch(93.658% 0.03017 267.226); /* #E1EAFF */
+
+  /* 边框颜色 */
+  --layout: oklch(97.875% 0.00585 264.665); /* #F6F8FC */
+  --layout-light: oklch(98.463% 0.00181 249.248); /* #F9FAFB */
+
+  /* 字体颜色 */
+  --foreground-2: oklch(55.439% 0.04078 257.446); /* #64748B */
+  --foreground-3: oklch(71.068% 0.0352 256.828); /* #94A3B8 */
+  --foreground-4: oklch(44.554% 0.0375 257.307); /* #475569 */
+
+  /* 蓝色 */
+  --blue: oklch(96.737% 0.01925 230.907); /** #E8F7FF */
+  --blue-foreground: oklch(65.539% 0.17846 254.384); /** #3491FA */
+  --blue-border: oklch(90.949% 0.04926 236.197); /** #C3E7FE */
+
+  /* 紫色 */
+  --purple: oklch(94.802% 0.03361 310.605); /** #F5E8FF */
+  --purple-foreground: oklch(49.421% 0.22845 295.584); /** #722ED1 */
+  --purple-border: oklch(94.643% 0.03284 307.067); /** #F3E8FF */
+
+  /* 警告色 */
+  --warning: oklch(97.317% 0.0259 82.357); /** #FFF5E3 */
+  --warning-foreground: oklch(72.74% 0.18766 51.735); /** #FF7D00 */
+  --warning-border: oklch(93.066% 0.06198 78.75); /** #FFE4BA */
+
+  /* 成功色 */
+  --success: oklch(95.005% 0.04257 148.543); /** #DCF7DF */
+  --success-foreground: oklch(66.868% 0.21421 144.402); /** #00B42A */
+  --success-border: oklch(92.705% 0.04619 148.236); /** #D3F0D6 */
+
+  /* 错误色 */
+  --error: oklch(95.712% 0.02139 31.532); /** #FFECE8 */
+  --error-hover: oklch(69.023% 0.18042 24.91); /* #F76560 */
+  --error-disable: oklch(81.811% 0.09453 26.465); /* #FBACA3 */
+  --error-foreground: oklch(64.183% 0.21824 25.865); /** #F53F3F */
+  --error-border: oklch(88.782% 0.05575 29.113); /** #FDCDC5 */
+
+  /* shadcn-vue Start */
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(27.95% 0.03688 260.049); /* #1E293B */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(27.95% 0.03688 260.049); /* #1E293B */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(27.95% 0.03688 260.049); /* #1E293B */
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(96.348% 0.00466 258.631); /** #F1F3F6 */
+  --secondary-foreground: oklch(44.554% 0.0375 257.307); /** #475569 */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(64.183% 0.21824 25.865); /* #F53F3F */
+  --border: oklch(93.254% 0.01219 259.928); /* #E4E9F1 */
+  --input: oklch(93.254% 0.01219 259.928); /* #E4E9F1 */
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(27.95% 0.03688 260.049); /* #1E293B */
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(20.463% 0.00002 271.152);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  /* shadcn-vue End */
+}
+
+.dark {
+  /* shadcn-vue Start */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+  /* shadcn-vue End */
+}
