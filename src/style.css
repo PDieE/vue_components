@@ -7,17 +7,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-  /* 重置@iconify/vue的样式 */
-  svg.iconify,
-  span.iconify {
-    display: inline-block;
-  }
-
-  /* 重置@ant-design/icons-vue的样式 */
-  .anticon {
-    display: inline-flex !important;
-  }
-
   /* 恢复按钮pointer */
   button:not(:disabled),
   [role='button']:not(:disabled) {
