@@ -1,9 +1,9 @@
-import type { VariantProps } from 'class-variance-authority';
-import { cva } from 'class-variance-authority';
-import { PrimitiveProps } from 'reka-ui';
-import { HTMLAttributes } from 'vue';
+import type { VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
+import type { PrimitiveProps } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 
-export { default as Button } from './Button.vue';
+export { default as Button } from './Button.vue'
 
 export const buttonVariants = cva(
   "inline-flex align-middle items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-normal transition-all disabled:pointer-events-none disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none aria-invalid:border-destructive",
@@ -149,16 +149,16 @@ export const buttonVariants = cva(
       theme: 'default',
     },
   },
-);
-export type ButtonVariants = VariantProps<typeof buttonVariants>;
+)
+export type ButtonVariants = VariantProps<typeof buttonVariants>
 
 export interface ButtonProps extends PrimitiveProps {
-  class?: HTMLAttributes['class'];
-  variant?: ButtonVariants['variant'];
-  size?: ButtonVariants['size'];
-  theme?: ButtonVariants['theme'];
-  loading?: boolean;
-  disabled?: boolean;
+  class?: HTMLAttributes['class']
+  variant?: ButtonVariants['variant']
+  size?: ButtonVariants['size']
+  theme?: ButtonVariants['theme']
+  loading?: boolean
+  disabled?: boolean
   /** 块级按钮 */
-  block?: boolean;
+  block?: boolean
 }
