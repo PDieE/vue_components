@@ -5,6 +5,10 @@ description: 用于表示内容正在加载的旋转指示器。
 
 # Spinner 加载器
 
+<div class="flex flex-wrap gap-2 not-content">
+  <a class="VPButton medium alt" href="https://shadcn-vue.com/docs/components/spinner" target="_blank" rel="noreferrer">shadcn-vue文档</a>
+</div>
+
 `UiSpinner` 是一个基于 `Loader2Icon` 的加载指示器。组件内置旋转动画，并带有 `role="status"` 与 `aria-label="Loading"`，可直接用于按钮、局部内容或页面加载状态。
 
 ## 基础用法

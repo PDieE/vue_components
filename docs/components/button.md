@@ -12,6 +12,11 @@ const submitting = ref(false)
 
 # Button 按钮
 
+<div class="flex flex-wrap gap-2 not-content">
+  <a class="VPButton medium alt" href="https://shadcn-vue.com/docs/components/button" target="_blank" rel="noreferrer">shadcn-vue文档</a>
+  <a class="VPButton medium alt" href="https://reka-ui.com/docs/utilities/primitive" target="_blank" rel="noreferrer">reka-ui文档</a>
+</div>
+
 `UiButton` 用于触发用户操作，支持不同的视觉样式、尺寸、主题、加载状态，以及以块级按钮展示。
 
 ## 基础用法

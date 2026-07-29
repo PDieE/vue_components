@@ -86,10 +86,7 @@ function decrease() {
             v-for="item in compareOptions"
             :key="item.value"
             :value="item.value"
-            @click="
-              modelValue.compare = item.value
-              dispatchChange()
-            "
+            @click="() => { modelValue.compare = item.value; dispatchChange() }"
           >
             {{ item.label }}
           </UiDropdownMenuItem>
