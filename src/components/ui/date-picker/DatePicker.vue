@@ -10,28 +10,39 @@ import type { HtmlHTMLAttributes } from 'vue'
 import type { WheelPickerGroupColumn, WheelPickerValue } from '@/components/ui/wheel-picker'
 import { cn } from '@/lib/utils'
 
+import type { DisableDate } from '.'
+
 const modelValue = defineModel<string>()
-const props = withDefaults(
-  defineProps<{
-    /** 值格式 */
-    valueFormat?: string | 'timestamp' | 'msTimestamp'
-    /** 占位符 */
-    placeholder?: string
-    /** 是否可清空 */
-    clearable?: boolean
-    /** 是否禁用 */
-    disabled?: boolean
-    /** 是否启用时间选择 */
-    enableTimePicker?: boolean
-    class?: HtmlHTMLAttributes['class']
-  }>(),
-  {
-    placeholder: '请选择日期',
-    clearable: true,
-    disabled: false,
-    enableTimePicker: false,
-  },
-)
+const {
+  valueFormat,
+  placeholder = '请选择日期',
+  clearable = true,
+  disabled = false,
+  enableTimePicker = false,
+  disableDate,
+  disableTime,
+  ...props
+} = defineProps<{
+  class?: HtmlHTMLAttributes['class']
+  /** 值格式 */
+  valueFormat?: string | 'timestamp' | 'msTimestamp'
+  /** 占位符 */
+  placeholder?: string
+  /** 是否可清空 */
+  clearable?: boolean
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否启用时间选择 */
+  enableTimePicker?: boolean
+  /** 禁用日期 */
+  disableDate?: DisableDate
+  /** 禁用时间 */
+  disableTime?: (time: dayjs.Dayjs) => Partial<{
+    hour: Array<number>
+    minute: Array<number>
+    second: Array<number>
+  }>
+}>()
 type DatePickerProps = {
   /** 值格式 */
   valueFormat?: string | 'timestamp' | 'msTimestamp'
@@ -52,28 +63,88 @@ const emits = defineEmits<{
 const innerValue = ref<DateValue>()
 const timeValue = ref<WheelPickerValue[]>(['00', '00', '00'])
 const effectiveValueFormat = computed<DatePickerProps['valueFormat']>(
-  () => props.valueFormat ?? (props.enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'),
+  () => valueFormat ?? (enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'),
 )
+/** 禁用的时间 */
+const disabledTime = computed(() => {
+  if (!enableTimePicker || !disableTime) return {}
+
+  const selectedDate = innerValue.value ?? today(getLocalTimeZone())
+  return disableTime(getSelectedDate(selectedDate))
+})
 const timeColumns = computed<WheelPickerGroupColumn[]>(() => [
   {
     options: Array.from({ length: 24 }, (_, i) => {
       const value = String(i).padStart(2, '0')
-      return { label: value, value }
+      return { label: value, value, disabled: disabledTime.value.hour?.includes(i) }
     }),
   },
   {
     options: Array.from({ length: 60 }, (_, i) => {
       const value = String(i).padStart(2, '0')
-      return { label: value, value }
+      return { label: value, value, disabled: disabledTime.value.minute?.includes(i) }
     }),
   },
   {
     options: Array.from({ length: 60 }, (_, i) => {
       const value = String(i).padStart(2, '0')
-      return { label: value, value }
+      return { label: value, value, disabled: disabledTime.value.second?.includes(i) }
     }),
   },
 ])
+
+/**
+ * 将任意日期值归一化为本地日期，忽略其时间部分。
+ * @param value 日期值
+ */
+function toDay(value: string | number | Date | dayjs.Dayjs | undefined) {
+  if (!value) return undefined
+  const date = dayjs(value)
+  return date.isValid() ? date.startOf('day') : undefined
+}
+/**
+ * 判断日期是否禁用（用于 Reka UI Calendar 使用）
+ * @param date 日期值
+ */
+function isDateDisabled(date: DateValue) {
+  if (!disableDate) return false
+
+  const currentDay = dayjs(date.toDate(getLocalTimeZone())).startOf('day')
+
+  // function类型的直接调用
+  if (typeof disableDate === 'function') return disableDate(currentDay)
+
+  // array类型的直接判断
+  if (Array.isArray(disableDate)) {
+    return disableDate.some((value) => currentDay.isSame(toDay(value), 'day'))
+  }
+
+  const from = toDay(disableDate.from)
+  const to = toDay(disableDate.to)
+  const before = toDay(disableDate.before)
+  const after = toDay(disableDate.after)
+
+  // `from` 和 `to` 必须成对存在；单独传入时不产生禁用范围。
+  if (
+    from &&
+    to &&
+    currentDay.isAfter(from.subtract(1, 'd'), 'day') &&
+    currentDay.isBefore(to.add(1, 'd'), 'day')
+  ) {
+    return true
+  }
+
+  // `before` 和 `after` 可以单独判断
+  if (before && currentDay.isBefore(before, 'day')) {
+    return true
+  }
+
+  if (after && currentDay.isAfter(after, 'day')) {
+    return true
+  }
+
+  return false
+}
 
 function normalizeTimePart(value?: WheelPickerValue) {
   const numberValue = Number(value)
@@ -108,7 +179,7 @@ function parseModelValue(v: string) {
   return date.isValid() ? parseDate(date.format('YYYY-MM-DD')) : undefined
 }
 function syncTimeValue(v: string) {
-  if (!props.enableTimePicker) return
+  if (!enableTimePicker) return
 
   const date = ['timestamp', 'msTimestamp'].includes(effectiveValueFormat.value ?? '')
     ? dayjs(effectiveValueFormat.value === 'timestamp' ? Number(v) * 1000 : Number(v))
@@ -164,7 +235,7 @@ function valueChanged(v?: DateValue) {
     emits('change', undefined)
     return
   }
-  open.value = props.enableTimePicker
+  open.value = enableTimePicker
   const value = formatModelValue(v)
   modelValue.value = value
   emits('change', cloneDeep(value))
@@ -188,7 +259,7 @@ function clear() {
 const dateShow = computed(() => {
   if (modelValue.value === undefined || modelValue.value === '' || !innerValue.value) return
   return getSelectedDate(innerValue.value).format(
-    props.enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD',
+    enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD',
   )
 })
 </script>
@@ -205,17 +276,17 @@ const dateShow = computed(() => {
             props.class,
           )
         "
-        :disabled="props.disabled"
+        :disabled="disabled"
       >
         <span :class="['flex-1 truncate', dateShow && 'text-foreground']">
-          {{ dateShow ? dateShow : props.placeholder }}
+          {{ dateShow ? dateShow : placeholder }}
         </span>
         <CalendarIcon
           class="text-foreground-2 group-disabled:text-foreground-3"
-          :class="props.clearable && dateShow && 'transition-all group-hover:opacity-0'"
+          :class="clearable && dateShow && 'transition-all group-hover:opacity-0'"
         />
         <span
-          v-if="props.clearable && dateShow"
+          v-if="clearable && dateShow"
           class="z-10 text-foreground-2 absolute right-3 transition-all opacity-0 group-hover:opacity-100 hover:text-foreground-4"
           @click.stop="clear()"
         >
@@ -229,10 +300,11 @@ const dateShow = computed(() => {
           v-model="innerValue"
           :default-placeholder="defaultPlaceholder"
           disable-days-outside-current-view
+          :is-date-disabled="isDateDisabled"
           locale="zh-CN"
           @update:model-value="valueChanged"
         />
-        <div v-if="props.enableTimePicker" class="flex flex-col border-l px-3 py-4">
+        <div v-if="enableTimePicker" class="flex flex-col border-l px-3 py-4">
           <UiWheelPickerGroup
             v-model="timeValue"
             :columns="timeColumns"
@@ -241,8 +313,10 @@ const dateShow = computed(() => {
           />
         </div>
       </div>
-      <div v-if="props.enableTimePicker" class="text-right p-2 border-t">
-        <UiButton size="xs" theme="brand" @click="confirm()">确定</UiButton>
+      <div v-if="enableTimePicker" class="text-right p-2 border-t">
+        <UiButton size="xs" theme="brand" :disabled="!innerValue" @click="confirm()">
+          确定
+        </UiButton>
       </div>
     </UiPopoverContent>
   </UiPopover>

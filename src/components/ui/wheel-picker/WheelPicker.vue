@@ -75,13 +75,35 @@ function updateModelValue(option?: WheelPickerOption) {
   modelValue.value = option.value
   emits('change', option.value)
 }
+/**
+ * 获取最近的未禁用选项的索引
+ * @param index 目标索引
+ */
+function getNearestEnabledIndex(index: number) {
+  const safeIndex = Math.min(Math.max(index, 0), props.options.length - 1)
+  if (!props.options[safeIndex]?.disabled) return safeIndex
 
+  for (let offset = 1; offset < props.options.length; offset += 1) {
+    const previousIndex = safeIndex - offset
+    if (previousIndex >= 0 && !props.options[previousIndex]?.disabled) return previousIndex
+
+    const nextIndex = safeIndex + offset
+    if (nextIndex < props.options.length && !props.options[nextIndex]?.disabled) return nextIndex
+  }
+}
+/**
+ * 选择索引对应的选项
+ * @param index 目标索引
+ * @param behavior 滚动行为
+ */
 function selectByIndex(index: number, behavior: ScrollBehavior = 'auto') {
   if (!props.options.length) return
 
-  const safeIndex = Math.min(Math.max(index, 0), props.options.length - 1)
-  updateModelValue(props.options[safeIndex])
-  scrollToIndex(safeIndex, behavior)
+  const enabledIndex = getNearestEnabledIndex(index)
+  if (enabledIndex === undefined) return syncScrollPosition(behavior)
+
+  updateModelValue(props.options[enabledIndex])
+  scrollToIndex(enabledIndex, behavior)
 }
 
 function handleScroll(event: Event) {

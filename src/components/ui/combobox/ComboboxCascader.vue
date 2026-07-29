@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TData extends object = ComboboxOptionCascader">
+<script setup lang="ts" generic="TData extends object = ComboboxOptionCascader, TParams = void">
 import { Icon } from '@iconify/vue'
 import { useQuery } from '@tanstack/vue-query'
 import { cloneDeep } from 'es-toolkit'
@@ -21,10 +21,10 @@ const {
   ...props
 } = defineProps<{
   /** 选项 */
-  options?: ComboboxOptionCascader[]
+  options?: TData[]
   /** 数据获取方法 */
-  api?: (params?: unknown) => Promise<TData[]>
-  params?: unknown
+  api?: (params: TParams) => Promise<TData[]>
+  params?: TParams
   /** 字段别名 */
   keys?: { type?: string; value?: string; label?: string; disabled?: string; children?: string }
   /** 占位符 */
@@ -59,6 +59,8 @@ const selectedPath = computed(() =>
 )
 /** 多列数据：第一列为根选项，后续列来自 expandedPath 中每个节点的 children */
 const columns = computed(() => {
+  if (!innerOptions.value.length) return []
+
   const visibleColumns: ComboboxOptionCascader[][] = [innerOptions.value]
 
   for (const option of expandedPath.value) {
@@ -71,7 +73,7 @@ const columns = computed(() => {
 const queryId = useId()
 const { data, status } = useQuery<TData[]>({
   queryKey: computed(() => ['ui-combobox-cascader', queryId, api, params]),
-  queryFn: () => (api ? api(params) : Promise.resolve([])),
+  queryFn: () => (api ? api(params as TParams) : Promise.resolve([])),
   staleTime: 0,
   gcTime: 0,
   refetchOnMount: 'always',
@@ -86,7 +88,7 @@ const normalizedKeys = computed(() => ({
 }))
 watchEffect(() => {
   if (!api) {
-    innerOptions.value = cloneDeep(options)
+    innerOptions.value = normalizeOptions(cloneDeep(options))
     return
   }
 
@@ -286,6 +288,7 @@ watch(open, (isOpen) => {
     <UiPopoverContent class="z-1000 w-auto p-0" align="start">
       <UiCommand class="rounded-md">
         <UiCommandList class="max-h-72 overflow-x-auto overflow-y-hidden [&>div]:flex">
+          <div v-if="columns.length === 0" class="w-(--reka-popover-trigger-width) py-6 text-center text-sm">暂无数据</div>
           <UiCommandGroup
             v-for="(column, level) in columns"
             :key="getColumnKey(column, level)"
