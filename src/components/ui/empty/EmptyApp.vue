@@ -1,23 +1,30 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
+import type { EmptyAppProps } from '.'
+import EmptySvg from './empty.svg'
 
-import { cn } from '@/lib/utils'
-
-import type { EmptyMediaVariants } from '.'
-import { emptyMediaVariants } from '.'
-
-const props = defineProps<{
-  class?: HTMLAttributes['class']
-  variant?: EmptyMediaVariants['variant']
-}>()
+const { mediaVariant, ...props } = defineProps<EmptyAppProps>()
 </script>
 
 <template>
-  <div
-    data-slot="empty-icon"
-    :data-variant="variant"
-    :class="cn(emptyMediaVariants({ variant }), props.class)"
-  >
+  <UiEmpty :class="props.class">
+    <UiEmptyHeader>
+      <UiEmptyMedia :variant="mediaVariant">
+        <slot name="media">
+          <div class="pl-4.75">
+            <EmptySvg />
+          </div>
+        </slot>
+      </UiEmptyMedia>
+      <UiEmptyTitle v-if="title || $slots.title">
+        <slot name="title">{{ title }}</slot>
+      </UiEmptyTitle>
+      <UiEmptyDescription v-if="description || $slots.description">
+        <slot name="description">{{ description }}</slot>
+      </UiEmptyDescription>
+    </UiEmptyHeader>
+    <UiEmptyContent>
+      <slot name="content" />
+    </UiEmptyContent>
     <slot />
-  </div>
+  </UiEmpty>
 </template>

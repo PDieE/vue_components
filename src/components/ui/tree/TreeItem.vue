@@ -68,10 +68,9 @@ const badgeProps = computed<(BadgeProps & { str?: string }) | undefined>(() => {
       <UiButton
         v-if="!props.flatten"
         variant="ghost"
-        theme="brand"
         size="icon-xs"
         :disabled="!props.hasChildren"
-        :class="!props.hasChildren && 'pointer-events-none opacity-0'"
+        :class="!props.hasChildren && 'pointer-events-none opacity-0!'"
         @click.stop="props.hasChildren && slots.handleToggle()"
       >
         <Icon
@@ -95,7 +94,10 @@ const badgeProps = computed<(BadgeProps & { str?: string }) | undefined>(() => {
 
       <slot name="action" v-bind="slots" />
 
-      <UiBadge v-if="badgeProps && badgeProps?.str === undefined" v-bind="badgeProps" />
+      <UiBadge
+        v-if="badgeProps && badgeProps?.str === undefined && badgeProps?.count"
+        v-bind="badgeProps"
+      />
       <UiBadge v-if="badgeProps && typeof badgeProps?.str === 'string'" v-bind="badgeProps">
         {{ badgeProps.str }}
       </UiBadge>

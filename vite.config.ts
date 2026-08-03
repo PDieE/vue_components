@@ -6,6 +6,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import svgLoader from 'vite-svg-loader'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -21,6 +22,7 @@ export default defineConfig({
       imports: ['vue', '@vueuse/core'],
       dirs: ['./src/lib', './src/composables'],
     }),
+    svgLoader(),
   ],
   resolve: {
     alias: {

@@ -1,25 +1,17 @@
 <template>
-  <UiEmpty>
-    <UiEmptyHeader>
-      <UiEmptyMedia variant="icon">
-        <Icon icon="icon-park-outline:folder-open" />
-      </UiEmptyMedia>
-      <UiEmptyTitle v-if="title">{{ title }}</UiEmptyTitle>
-      <UiEmptyDescription v-if="desc">{{ desc }}</UiEmptyDescription>
-    </UiEmptyHeader>
-    <UiEmptyContent v-if="$slots.content">
-      <slot name="content"></slot>
-    </UiEmptyContent>
-    <slot name="after"></slot>
-  </UiEmpty>
+  <UiEmptyApp v-bind="props" :description="description">
+    <template v-if="$slots.media" #media><slot name="media" /></template>
+    <template v-if="$slots.title" #title><slot name="title" /></template>
+    <template v-if="$slots.description" #description><slot name="description" /></template>
+    <template v-if="$slots.content" #content><slot name="content" /></template>
+    <template v-if="$slots.default" #default><slot /></template>
+  </UiEmptyApp>
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@iconify/vue'
+import type { EmptyAppProps } from '../empty'
 
-import type { EmptyProps } from '.'
-
-const { title = '暂无数据', desc } = defineProps<EmptyProps>()
+const { description = '暂无数据', ...props } = defineProps<EmptyAppProps>()
 
 /**
  * ====================

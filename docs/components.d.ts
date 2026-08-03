@@ -89,6 +89,7 @@ declare module 'vue' {
     UiDropdownMenuSubTrigger: typeof import('./../src/components/ui/dropdown-menu/DropdownMenuSubTrigger.vue')['default']
     UiDropdownMenuTrigger: typeof import('./../src/components/ui/dropdown-menu/DropdownMenuTrigger.vue')['default']
     UiEmpty: typeof import('./../src/components/ui/empty/Empty.vue')['default']
+    UiEmptyApp: typeof import('./../src/components/ui/empty/EmptyApp.vue')['default']
     UiEmptyContent: typeof import('./../src/components/ui/empty/EmptyContent.vue')['default']
     UiEmptyDescription: typeof import('./../src/components/ui/empty/EmptyDescription.vue')['default']
     UiEmptyHeader: typeof import('./../src/components/ui/empty/EmptyHeader.vue')['default']
