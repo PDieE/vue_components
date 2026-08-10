@@ -1,11 +1,7 @@
 <script
   setup
   lang="ts"
-  generic="
-    T extends Record<string, unknown>,
-    U extends Record<string, unknown>,
-    M extends boolean = false
-  "
+  generic="T extends Record<string, any>, U extends Record<string, any>, M extends boolean = false"
 >
 import { useQuery } from '@tanstack/vue-query'
 import { cloneDeep, isEqual, omit } from 'es-toolkit'

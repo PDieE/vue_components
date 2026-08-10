@@ -16,8 +16,10 @@ const {
   placeholder = ['开始日期', '结束日期'],
   clearable = true,
   disabled = false,
+  readonly = false,
   ...props
 } = defineProps<{
+  class?: HtmlHTMLAttributes['class']
   /** 值格式 */
   valueFormat?: string | 'timestamp' | 'msTimestamp'
   /** 占位符 */
@@ -26,8 +28,15 @@ const {
   clearable?: boolean
   /** 是否禁用 */
   disabled?: boolean
-  class?: HtmlHTMLAttributes['class']
+  /** 是否只读，只读时不可打开或修改日期 */
+  readonly?: boolean
 }>()
+watch(
+  () => readonly,
+  (isReadonly) => {
+    if (isReadonly) open.value = false
+  },
+)
 const emits = defineEmits<{
   /**
    * 日期选择器值改变时触发
@@ -112,6 +121,8 @@ const open = shallowRef(false)
  * @param v 日期范围
  */
 function valueChanged(v: DateRange) {
+  if (readonly) return
+
   if (!v.start || !v.end) return
   open.value = false
   const value: [string, string] = [formatModelValue(v.start), formatModelValue(v.end)]
@@ -119,6 +130,8 @@ function valueChanged(v: DateRange) {
   emits('change', cloneDeep(value))
 }
 function clear() {
+  if (readonly) return
+
   modelValue.value = undefined
   innerValue.value = undefined
   emits('change', undefined)
@@ -136,13 +149,17 @@ const end = computed(() => {
 </script>
 
 <template>
-  <UiPopover v-model:open="open">
+  <UiPopover
+    :open="open"
+    @update:open="(nextOpen) => (!readonly || !nextOpen ? (open = nextOpen) : undefined)"
+  >
     <UiPopoverTrigger as-child>
       <UiButton
         variant="outline"
         :class="
           cn(
             'group relative text-left font-normal text-foreground-3',
+            readonly && 'cursor-default',
             'disabled:bg-disabled disabled:border-input disabled:opacity-100',
             props.class,
           )
@@ -158,10 +175,10 @@ const end = computed(() => {
         </span>
         <CalendarIcon
           class="text-foreground-2 group-disabled:text-foreground-3"
-          :class="clearable && start && end && 'transition-all group-hover:opacity-0'"
+          :class="!readonly && clearable && start && end && 'transition-all group-hover:opacity-0'"
         />
         <span
-          v-if="clearable && start && end"
+          v-if="!readonly && clearable && start && end"
           class="z-10 text-foreground-2 absolute right-3 transition-all opacity-0 group-hover:opacity-100 hover:text-foreground-4"
           @click.stop="clear()"
         >

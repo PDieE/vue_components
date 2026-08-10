@@ -18,8 +18,10 @@ const {
   placeholder = '请选择',
   clearable = true,
   checkStrictly = false,
+  readonly = false,
   ...props
 } = defineProps<{
+  class?: HTMLAttributes['class']
   /** 选项 */
   options?: TData[]
   /** 数据获取方法 */
@@ -33,8 +35,15 @@ const {
   clearable?: boolean
   /** 可各自选中或取消 */
   checkStrictly?: boolean
-  class?: HTMLAttributes['class']
+  /** 是否只读，只读时不可打开或修改选择 */
+  readonly?: boolean
 }>()
+watch(
+  () => readonly,
+  (isReadonly) => {
+    if (isReadonly) open.value = false
+  },
+)
 const emits = defineEmits<{
   /** 选择选项时触发 */
   change: [value: ComboboxValue | undefined, option: TData | undefined, path: TData[]]
@@ -169,6 +178,8 @@ function findOptionPath(
  * @param opt 选择的选项
  */
 async function select(opt: ComboboxOptionCascader | undefined) {
+  if (readonly) return
+
   if (opt?.children?.length && !checkStrictly) return
   modelValue.value = opt?.value
   open.value = false
@@ -201,6 +212,8 @@ function expand(option: ComboboxOptionCascader, level: number) {
  * @param level 当前选项所在列索引
  */
 function handleSelect(option: ComboboxOptionCascader, level: number) {
+  if (readonly) return
+
   expand(option, level)
   select(option)
 }
@@ -251,7 +264,10 @@ watch(open, (isOpen) => {
 </script>
 
 <template>
-  <UiPopover v-model:open="open">
+  <UiPopover
+    :open="open"
+    @update:open="(nextOpen) => (!readonly || !nextOpen ? (open = nextOpen) : undefined)"
+  >
     <UiPopoverTrigger as-child>
       <Button
         variant="outline"
@@ -261,6 +277,7 @@ watch(open, (isOpen) => {
         :class="
           cn(
             'group',
+            readonly && 'cursor-default',
             'disabled:bg-disabled disabled:border-input disabled:opacity-100 disabled:text-foreground-3',
             open && 'border-brand',
             props.class,
@@ -273,11 +290,11 @@ watch(open, (isOpen) => {
         </span>
         <Icon
           class="text-foreground-2"
-          :class="clearable && selected && 'transition-all group-hover:opacity-0'"
+          :class="!readonly && clearable && selected && 'transition-all group-hover:opacity-0'"
           icon="icon-park-outline:down"
         />
         <span
-          v-if="clearable && selected"
+          v-if="!readonly && clearable && selected"
           class="z-10 text-foreground-2 absolute right-2.5 transition-all opacity-0 group-hover:opacity-100 hover:text-foreground-4"
           @click.stop="select(undefined)"
         >
@@ -288,7 +305,12 @@ watch(open, (isOpen) => {
     <UiPopoverContent class="z-1000 w-auto p-0" align="start">
       <UiCommand class="rounded-md">
         <UiCommandList class="max-h-72 overflow-x-auto overflow-y-hidden [&>div]:flex">
-          <div v-if="columns.length === 0" class="w-(--reka-popover-trigger-width) py-6 text-center text-sm">暂无数据</div>
+          <div
+            v-if="columns.length === 0"
+            class="w-(--reka-popover-trigger-width) py-6 text-center text-sm"
+          >
+            暂无数据
+          </div>
           <UiCommandGroup
             v-for="(column, level) in columns"
             :key="getColumnKey(column, level)"

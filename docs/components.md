@@ -22,9 +22,11 @@ description: Vue Components 提供的全部 UI 组件。
 | [Checkbox](/components/checkbox) | 复选框及复选框组。 |
 | [Collapsible](/components/collapsible) | 可展开和折叠内容。 |
 | [Combobox](/components/combobox) | 搜索和选择。 |
+| [Combobox Cascader](/components/combobox-cascader) | 层级选项的级联选择。 |
 | [Command](/components/command) | 命令菜单。 |
 | [Data Table](/components/data-table) | 数据表格。 |
-| [Date Picker](/components/date-picker) | 日期和日期范围选择。 |
+| [Date Picker](/components/date-picker) | 单个日期选择。 |
+| [Date Picker Range](/components/date-picker-range) | 起止日期范围选择。 |
 | [Dialog](/components/dialog) | 模态对话框。 |
 | [Dropdown Menu](/components/dropdown-menu) | 下拉菜单。 |
 | [Empty](/components/empty) | 空状态。 |

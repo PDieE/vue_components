@@ -1,13 +1,13 @@
 ---
 title: Date Picker 日期选择
-description: 选择日期或日期范围。
+description: 选择单个日期。
 ---
 
 # Date Picker 日期选择
 
 <a class="VPButton medium alt" href="https://shadcn-vue.com/docs/components/date-picker" target="_blank" rel="noreferrer">shadcn-vue文档</a> <a class="VPButton medium alt" href="https://reka-ui.com/docs/components/date-picker" target="_blank" rel="noreferrer">reka-ui文档</a>
 
-`UiDatePicker` 用于选择日期，`UiDatePickerRange` 用于选择日期范围。
+`UiDatePicker` 用于选择单个日期。
 
 ## 基础用法
 
@@ -19,10 +19,14 @@ description: 选择日期或日期范围。
 <UiDatePicker v-model="date" />
 ```
 
-## 日期范围
+## 只读
+
+`readonly` 会保留当前日期展示和正常视觉样式，鼠标显示为默认样式，且不可打开面板、选择日期或清空。
 
 ```vue
-<UiDatePickerRange v-model="range" />
+<template>
+  <UiDatePicker v-model="date" readonly />
+</template>
 ```
 
 ## 禁用日期

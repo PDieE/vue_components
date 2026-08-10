@@ -18,6 +18,7 @@ const {
   placeholder = '请选择日期',
   clearable = true,
   disabled = false,
+  readonly = false,
   enableTimePicker = false,
   disableDate,
   disableTime,
@@ -32,6 +33,8 @@ const {
   clearable?: boolean
   /** 是否禁用 */
   disabled?: boolean
+  /** 是否只读，只读时不可打开或修改日期 */
+  readonly?: boolean
   /** 是否启用时间选择 */
   enableTimePicker?: boolean
   /** 禁用日期 */
@@ -43,6 +46,12 @@ const {
     second: Array<number>
   }>
 }>()
+watch(
+  () => readonly,
+  (isReadonly) => {
+    if (isReadonly) open.value = false
+  },
+)
 type DatePickerProps = {
   /** 值格式 */
   valueFormat?: string | 'timestamp' | 'msTimestamp'
@@ -230,6 +239,8 @@ const open = shallowRef(false)
  * @param v 日期范围
  */
 function valueChanged(v?: DateValue) {
+  if (readonly) return
+
   if (!v) {
     modelValue.value = undefined
     emits('change', undefined)
@@ -241,6 +252,8 @@ function valueChanged(v?: DateValue) {
   emits('change', cloneDeep(value))
 }
 function timeChanged() {
+  if (readonly) return
+
   if (!innerValue.value) innerValue.value = today(getLocalTimeZone())
 
   const value = formatModelValue(innerValue.value)
@@ -251,6 +264,8 @@ function confirm() {
   open.value = false
 }
 function clear() {
+  if (readonly) return
+
   modelValue.value = undefined
   innerValue.value = undefined
   timeValue.value = ['00', '00', '00']
@@ -265,13 +280,17 @@ const dateShow = computed(() => {
 </script>
 
 <template>
-  <UiPopover v-model:open="open">
+  <UiPopover
+    :open="open"
+    @update:open="(nextOpen) => (!readonly || !nextOpen ? (open = nextOpen) : undefined)"
+  >
     <UiPopoverTrigger as-child>
       <UiButton
         variant="outline"
         :class="
           cn(
             'group relative text-left font-normal text-foreground-3',
+            readonly && 'cursor-default',
             'disabled:bg-disabled disabled:border-input disabled:opacity-100',
             props.class,
           )
@@ -283,10 +302,10 @@ const dateShow = computed(() => {
         </span>
         <CalendarIcon
           class="text-foreground-2 group-disabled:text-foreground-3"
-          :class="clearable && dateShow && 'transition-all group-hover:opacity-0'"
+          :class="!readonly && clearable && dateShow && 'transition-all group-hover:opacity-0'"
         />
         <span
-          v-if="clearable && dateShow"
+          v-if="!readonly && clearable && dateShow"
           class="z-10 text-foreground-2 absolute right-3 transition-all opacity-0 group-hover:opacity-100 hover:text-foreground-4"
           @click.stop="clear()"
         >

@@ -31,10 +31,12 @@ const {
   filter = false,
   filterPlaceholder = '搜索',
   disabled = false,
+  readonly = false,
   loading = false,
   multiple = false,
   ...props
 } = defineProps<{
+  class?: HTMLAttributes['class']
   /** 选项 */
   options?: ComboboxOption[]
   /** 数据获取方法 */
@@ -52,12 +54,19 @@ const {
   filterPlaceholder?: string
   /** 是否禁用 */
   disabled?: boolean
+  /** 是否只读，只读时不可打开或修改选择 */
+  readonly?: boolean
   /** 外部加载状态 */
   loading?: boolean
   /** 是否多选 */
   multiple?: boolean
-  class?: HTMLAttributes['class']
 }>()
+watch(
+  () => readonly,
+  (isReadonly) => {
+    if (isReadonly) open.value = false
+  },
+)
 const emits = defineEmits<{
   /** 选择选项时触发 */
   change: [value: ComboboxModelValue, option: ComboboxChangeOption]
@@ -109,6 +118,8 @@ watchEffect(() => {
  * @param selectedValue 选择的值
  */
 async function select(selectedValue: ComboboxValue | undefined) {
+  if (readonly) return
+
   // 多选模式
   if (multiple) {
     if (selectedValue === undefined) return
@@ -130,6 +141,8 @@ async function select(selectedValue: ComboboxValue | undefined) {
 }
 /** 清空选择的选项 */
 async function clearSelected() {
+  if (readonly) return
+
   const nextValue = multiple ? [] : undefined
   modelValue.value = nextValue
   open.value = false
@@ -146,7 +159,10 @@ function isOptionSelected(value: ComboboxValue) {
 </script>
 
 <template>
-  <Popover v-model:open="open">
+  <Popover
+    :open="open"
+    @update:open="(nextOpen) => (!readonly || !nextOpen ? (open = nextOpen) : undefined)"
+  >
     <PopoverTrigger as-child>
       <Button
         variant="outline"
@@ -156,6 +172,7 @@ function isOptionSelected(value: ComboboxValue) {
         :class="
           cn(
             'group transition-none',
+            readonly && 'cursor-default',
             multiple && selectedOptions.length && 'h-auto min-h-8 py-1',
             'disabled:bg-disabled disabled:border-input disabled:opacity-100 disabled:text-foreground-3',
             open && 'border-brand',
@@ -176,7 +193,7 @@ function isOptionSelected(value: ComboboxValue) {
           >
             <span class="max-w-28 truncate">{{ option.label }}</span>
             <span
-              v-if="!disabled"
+              v-if="!disabled && !readonly"
               class="ml-1 inline-flex text-foreground-2 hover:text-foreground-4"
               @click.stop="select(option.value)"
             >
@@ -188,6 +205,7 @@ function isOptionSelected(value: ComboboxValue) {
         <Icon
           class="text-foreground-2"
           :class="
+            !readonly &&
             clearable &&
             (selected || selectedOptions.length) &&
             'transition-all group-hover:opacity-0'
@@ -195,7 +213,7 @@ function isOptionSelected(value: ComboboxValue) {
           icon="icon-park-outline:down"
         />
         <span
-          v-if="clearable && (selected || selectedOptions.length)"
+          v-if="!readonly && clearable && (selected || selectedOptions.length)"
           class="z-10 text-foreground-2 absolute right-2.5 transition-all opacity-0 group-hover:opacity-100 hover:text-foreground-4"
           @click.stop="clearSelected"
         >

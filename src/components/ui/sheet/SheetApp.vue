@@ -51,7 +51,7 @@ const {
   description,
   size,
   closable = true,
-  closeOnInteractOutside = true,
+  closeOnInteractOutside = false,
   closeOnEscape = true,
 } = defineProps<{
   /** 宽度 */
@@ -62,7 +62,7 @@ const {
   description?: string
   /** 是否显示关闭按钮，默认显示 */
   closable?: boolean
-  /** 是否允许点击外部区域关闭，默认允许 */
+  /** 是否允许点击外部区域关闭，默认不允许 */
   closeOnInteractOutside?: boolean
   /** 是否允许按 Escape 关闭，默认允许 */
   closeOnEscape?: boolean

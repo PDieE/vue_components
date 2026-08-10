@@ -1,3 +1,6 @@
+export { default as Combobox } from './Combobox.vue'
+export { default as ComboboxCascader } from './ComboboxCascader.vue'
+
 /** 组合框元素值 */
 export type ComboboxValue = string | number | bigint | null
 
