@@ -38,7 +38,7 @@ const {
 } = defineProps<{
   class?: HTMLAttributes['class']
   /** 选项 */
-  options?: ComboboxOption[]
+  options?: (ComboboxOption | TData)[]
   /** 数据获取方法 */
   api?: (params?: unknown) => Promise<TData[]>
   params?: unknown
@@ -78,7 +78,31 @@ const emits = defineEmits<{
  * ====================
  */
 const open = shallowRef(false)
-const innerOptions = ref<ComboboxOption[]>([])
+const innerOptions = computed(() => {
+  const { type = 'type', value = 'value', label = 'label', disabled = 'disabled' } = keys || {}
+  if (!api) {
+    return cloneDeep(options || []).map((v) => {
+      const item = v as Record<string, unknown>
+      return {
+        ...item,
+        type: item[type] as ComboboxOption['type'],
+        value: item[value] as ComboboxValue,
+        label: item[label] as string,
+        disabled: item[disabled] as boolean,
+      }
+    })
+  }
+  return cloneDeep(data.value || []).map((v) => {
+    const item = v as Record<string, unknown>
+    return {
+      ...item,
+      type: item[type] as ComboboxOption['type'],
+      value: item[value] as ComboboxValue,
+      label: item[label] as string,
+      disabled: item[disabled] as boolean,
+    }
+  })
+})
 const selectedValueList = computed<ComboboxValue[]>(() => {
   if (!Array.isArray(modelValue.value)) return []
   return modelValue.value
@@ -94,23 +118,6 @@ const { data, status } = useQuery<TData[]>({
   staleTime: 0,
   gcTime: 0,
   refetchOnMount: 'always',
-})
-watchEffect(() => {
-  const { type = 'type', value = 'value', label = 'label', disabled = 'disabled' } = keys || {}
-  if (!api) {
-    innerOptions.value = cloneDeep(options)
-    return
-  }
-  innerOptions.value = cloneDeep(data.value || []).map((v) => {
-    const item = v as Record<string, unknown>
-    return {
-      ...item,
-      type: item[type] as ComboboxOption['type'],
-      value: item[value] as ComboboxValue,
-      label: item[label] as string,
-      disabled: item[disabled] as boolean,
-    }
-  })
 })
 
 /**

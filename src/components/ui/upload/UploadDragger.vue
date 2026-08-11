@@ -13,15 +13,16 @@
       :class="
         cn(
           'flex w-full items-center justify-center gap-4 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] px-4 py-8 transition-colors',
-          !disabled && 'cursor-pointer hover:border-brand',
-          dragging && !disabled && 'border-brand bg-brand/5',
+          !disabled && !readonly && 'cursor-pointer hover:border-brand',
+          readonly && 'cursor-default',
+          dragging && !disabled && !readonly && 'border-brand bg-brand/5',
           disabled && 'cursor-not-allowed opacity-60',
           'group-aria-invalid:border-destructive',
         )
       "
       role="button"
-      :tabindex="!disabled ? 0 : -1"
-      :aria-disabled="disabled ? 'true' : undefined"
+      :tabindex="!disabled && !readonly ? 0 : -1"
+      :aria-disabled="disabled || readonly ? 'true' : undefined"
       @click="openFileDialog()"
       @keydown.enter.prevent="openFileDialog()"
       @keydown.space.prevent="openFileDialog()"
@@ -50,7 +51,7 @@
       type="file"
       :accept="accept"
       :multiple="multiple"
-      :disabled="disabled"
+      :disabled="disabled || readonly"
       @input.stop
       @change.stop="handleInputChange"
     />
@@ -96,7 +97,7 @@
 
           <!-- 状态：等待 -->
           <UiButton
-            v-if="file.status === 'waiting' && showUploadButton"
+            v-if="!readonly && file.status === 'waiting' && showUploadButton"
             class="group/button"
             :disabled="disabled"
             variant="ghost"
@@ -139,7 +140,7 @@
 
           <!-- 状态：失败 -->
           <UiButton
-            v-if="file.status === 'fail'"
+            v-if="!readonly && file.status === 'fail'"
             class="text-xs"
             :disabled="disabled"
             variant="ghost"
@@ -153,6 +154,7 @@
         </div>
 
         <UiButton
+          v-if="!readonly"
           class="group/button"
           :disabled="disabled"
           variant="ghost"
@@ -228,6 +230,7 @@ const {
   accept,
   multiple = false,
   disabled = false,
+  readonly = false,
   autoUpload = true,
   showUploadButton = true,
   showFileList = true,
@@ -251,6 +254,8 @@ const {
   multiple?: boolean
   /** 是否禁用上传组件 */
   disabled?: boolean
+  /** 是否只读，只读时不可选择、上传或删除文件 */
+  readonly?: boolean
   /** 是否在选中文件后自动上传；为 false 时可通过暴露的 upload 方法手动上传 */
   autoUpload?: boolean
   /** 是否显示上传按钮 */
@@ -293,7 +298,7 @@ const progressCircumference = 2 * Math.PI * 6
 
 /** 打开文件选择框 */
 function openFileDialog() {
-  if (disabled || overCount.value) {
+  if (disabled || readonly || overCount.value) {
     return
   }
   inputRef.value?.click()
@@ -303,7 +308,7 @@ function openFileDialog() {
  * 手动触发上传。未传入文件时，会上传所有等待上传或上传失败的文件。
  */
 async function upload(target?: UploadFile) {
-  if (disabled) {
+  if (disabled || readonly) {
     return []
   }
   const targets = target
@@ -323,7 +328,7 @@ async function upload(target?: UploadFile) {
 }
 
 function handleDragEnter() {
-  if (disabled) {
+  if (disabled || readonly) {
     return
   }
   dragDepth.value += 1
@@ -331,7 +336,7 @@ function handleDragEnter() {
 }
 
 function handleDragOver(event: DragEvent) {
-  if (disabled) {
+  if (disabled || readonly) {
     return
   }
   event.dataTransfer!.dropEffect = 'copy'
@@ -345,7 +350,7 @@ function handleDragLeave() {
 function handleDrop(event: DragEvent) {
   dragDepth.value = 0
   dragging.value = false
-  if (disabled || !event.dataTransfer?.files?.length) {
+  if (disabled || readonly || !event.dataTransfer?.files?.length) {
     return
   }
   void addFiles(Array.from(event.dataTransfer.files))
@@ -353,6 +358,10 @@ function handleDrop(event: DragEvent) {
 
 function handleInputChange(event: Event) {
   const target = event.target as HTMLInputElement
+  if (readonly) {
+    target.value = ''
+    return
+  }
   if (!target.files?.length) {
     return
   }
@@ -361,6 +370,8 @@ function handleInputChange(event: Event) {
 }
 
 async function addFiles(rawFiles: File[]) {
+  if (readonly) return
+
   if (count === 1) {
     const rawFile = rawFiles[0]
     if (!rawFile) {
@@ -593,6 +604,8 @@ function setFileState(id: string, patch: Partial<UploadFile>) {
  * @param id 文件ID
  */
 function removeFile(id: string) {
+  if (readonly) return
+
   fileMap.value.delete(id)
   updateFileList()
 }

@@ -1,6 +1,7 @@
 export { default as Input } from './Input.vue'
 export { default as InputApp } from './InputApp.vue'
 export { default as InputCompare } from './InputCompare.vue'
+export { default as InputNumber } from './InputNumber.vue'
 
 /** 对比输入框 */
 export interface InputCompareValue {

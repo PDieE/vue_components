@@ -13,13 +13,17 @@
         :class="
           cn(
             'flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] p-2 transition-colors',
-            !disabled ? 'cursor-pointer hover:border-brand' : 'cursor-not-allowed opacity-60',
+            !disabled && !readonly
+              ? 'cursor-pointer hover:border-brand'
+              : readonly
+                ? 'cursor-default'
+                : 'cursor-not-allowed opacity-60',
           )
         "
         :style="triggerStyle"
         role="button"
-        :tabindex="!disabled ? 0 : -1"
-        :aria-disabled="disabled ? 'true' : undefined"
+        :tabindex="!disabled && !readonly ? 0 : -1"
+        :aria-disabled="disabled || readonly ? 'true' : undefined"
         @click="openFileDialog()"
         @keydown.enter.prevent="openFileDialog()"
         @keydown.space.prevent="openFileDialog()"
@@ -35,13 +39,17 @@
         :class="
           cn(
             'group/image relative shrink-0 overflow-hidden rounded-md',
-            !disabled ? 'cursor-pointer' : 'cursor-not-allowed',
+            !disabled && !readonly
+              ? 'cursor-pointer'
+              : readonly
+                ? 'cursor-default'
+                : 'cursor-not-allowed',
           )
         "
         :style="imageStyle"
         role="button"
-        :tabindex="!disabled ? 0 : -1"
-        :aria-disabled="disabled ? 'true' : undefined"
+        :tabindex="!disabled && !readonly ? 0 : -1"
+        :aria-disabled="disabled || readonly ? 'true' : undefined"
         @click="openFileDialog()"
         @keydown.enter.prevent="openFileDialog()"
         @keydown.space.prevent="openFileDialog()"
@@ -107,7 +115,9 @@
 
           <!-- 状态：等待/失败 - 上传按钮 -->
           <button
-            v-else-if="(file.status === 'waiting' || file.status === 'fail') && showUploadButton"
+            v-else-if="
+              !readonly && (file.status === 'waiting' || file.status === 'fail') && showUploadButton
+            "
             type="button"
             class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
             :disabled="disabled"
@@ -124,6 +134,7 @@
 
           <!-- 删除按钮（始终存在） -->
           <button
+            v-if="!readonly"
             type="button"
             class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
             :disabled="disabled"
@@ -165,7 +176,7 @@
       type="file"
       :accept="accept"
       :multiple="multiple"
-      :disabled="disabled"
+      :disabled="disabled || readonly"
       @input.stop
       @change.stop="handleInputChange"
     />
@@ -222,6 +233,7 @@ const {
   accept = 'image/*',
   multiple = false,
   disabled = false,
+  readonly = false,
   autoUpload = true,
   showUploadButton = true,
   ...props
@@ -245,6 +257,8 @@ const {
   multiple?: boolean
   /** 是否禁用上传组件 */
   disabled?: boolean
+  /** 是否只读，只读时不可选择、上传或删除图片 */
+  readonly?: boolean
   /** 是否在选中文件后自动上传；为 false 时可通过暴露的 upload 方法手动上传 */
   autoUpload?: boolean
   /** 是否显示上传按钮 */
@@ -302,7 +316,7 @@ const progressCircumference = 2 * Math.PI * 14
 
 /** 打开文件选择框 */
 function openFileDialog() {
-  if (disabled || overCount.value) {
+  if (disabled || readonly || overCount.value) {
     return
   }
   inputRef.value?.click()
@@ -318,7 +332,7 @@ function handlePreview(index: number) {
  * 手动触发上传。未传入文件时，会上传所有等待上传或上传失败的文件。
  */
 async function upload(target?: UploadFile) {
-  if (disabled) {
+  if (disabled || readonly) {
     return []
   }
   const targets = target
@@ -339,6 +353,10 @@ async function upload(target?: UploadFile) {
 
 function handleInputChange(event: Event) {
   const target = event.target as HTMLInputElement
+  if (readonly) {
+    target.value = ''
+    return
+  }
   if (!target.files?.length) {
     return
   }
@@ -347,6 +365,8 @@ function handleInputChange(event: Event) {
 }
 
 async function addFiles(rawFiles: File[]) {
+  if (readonly) return
+
   const selected = multiple ? rawFiles : rawFiles.slice(0, 1)
   const remainingCount = Math.max(0, count - fileMap.value.size)
   const allowedFiles = selected.slice(0, remainingCount)
@@ -559,6 +579,8 @@ function setFileState(id: string, patch: Partial<UploadFile>) {
  * @param id 文件ID
  */
 function removeFile(id: string) {
+  if (readonly) return
+
   const previewUrl = previewMap.value.get(id)
   if (previewUrl?.startsWith('blob:')) {
     URL.revokeObjectURL(previewUrl)

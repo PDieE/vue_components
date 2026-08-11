@@ -66,5 +66,6 @@ description: Vue Components 提供的全部 UI 组件。
 | [Time Picker](/components/time-picker) | 时间选择。 |
 | [Tooltip](/components/tooltip) | 文字提示。 |
 | [Tree](/components/tree) | 树形结构。 |
-| [Upload](/components/upload) | 文件和图片上传。 |
+| [Upload Dragger](/components/upload-dragger) | 点击或拖拽上传文件。 |
+| [Upload Image](/components/upload) | 图片上传与预览。 |
 | [Wheel Picker](/components/wheel-picker) | 滚轮选择器。 |

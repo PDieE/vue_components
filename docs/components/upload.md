@@ -1,10 +1,10 @@
 ---
-title: Upload 上传
-description: 上传文件或图片。
+title: Upload Image 图片上传
+description: 上传和预览图片。
 ---
-# Upload 上传
+# Upload Image 图片上传
 
-支持拖拽上传、图片上传、进度状态和文件数据转换工具。
+`UiUploadImage` 用于上传和预览图片，支持进度状态和图片尺寸校验。
 
 ## 基础用法
 
@@ -16,10 +16,16 @@ description: 上传文件或图片。
 <UiUploadImage v-model="files" />
 ```
 
-## 组件组成
+## 只读
 
-UiUploadDragger、UiUploadImage。
+`readonly` 会保留已上传图片和预览能力，但不可选择、上传、重试或删除图片；组件保持正常视觉样式并使用默认鼠标样式。
 
-## 使用说明
+```vue
+<UiUploadImage v-model="files" readonly />
+```
 
-请结合实际业务状态通过 `v-model`、属性和事件进行控制。
+## API
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `readonly` | `boolean` | `false` | 是否只读；只读时不可选择、上传、重试或删除图片，但仍可预览。 |

@@ -211,7 +211,7 @@ function syncCurrentFromModelValue() {
   current.value = fixDecimalPlaces(modelValue.value).toString()
 }
 watch(
-  [modelValue, decimalPlaces],
+  [modelValue, () => decimalPlaces],
   () => {
     if (Number(modelValue.value) === Number(current.value)) return
     syncCurrentFromModelValue()

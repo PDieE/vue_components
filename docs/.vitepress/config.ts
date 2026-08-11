@@ -97,7 +97,8 @@ export default defineConfig({
           { text: 'Time Picker 时间选择', link: '/components/time-picker' },
           { text: 'Tooltip 文字提示', link: '/components/tooltip' },
           { text: 'Tree 树形结构', link: '/components/tree' },
-          { text: 'Upload 上传', link: '/components/upload' },
+          { text: 'Upload Dragger 拖拽上传', link: '/components/upload-dragger' },
+          { text: 'Upload Image 图片上传', link: '/components/upload' },
           { text: 'Wheel Picker 滚轮选择器', link: '/components/wheel-picker' }
         ]
       }
