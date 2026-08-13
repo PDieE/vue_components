@@ -1,9 +1,8 @@
-import type { ResizableNodeViewDirection } from "@tiptap/core";
+import type { ResizableNodeViewDirection } from '@tiptap/core'
+import { mergeAttributes, Node, nodeInputRule } from '@tiptap/core'
+import { VueNodeViewRenderer } from '@tiptap/vue-3'
 
-import { mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
-import { VueNodeViewRenderer } from "@tiptap/vue-3";
-
-import ImageComponent from "./ImageComponent.vue";
+import ImageComponent from './ImageComponent.vue'
 
 export interface ImageOptions {
   /**
@@ -11,7 +10,7 @@ export interface ImageOptions {
    * @default false
    * @example true
    */
-  inline: boolean;
+  inline: boolean
 
   /**
    * Controls if base64 images are allowed. Enable this if you want to allow
@@ -19,14 +18,14 @@ export interface ImageOptions {
    * @default false
    * @example true
    */
-  allowBase64: boolean;
+  allowBase64: boolean
 
   /**
    * HTML attributes to add to the image element.
    * @default {}
    * @example { class: 'foo' }
    */
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, any>
 
   /**
    * Controls if the image should be resizable and how the resize is configured.
@@ -35,24 +34,24 @@ export interface ImageOptions {
    */
   resize:
     | {
-        enabled: boolean;
-        directions?: ResizableNodeViewDirection[];
-        minWidth?: number;
-        minHeight?: number;
-        alwaysPreserveAspectRatio?: boolean;
+        enabled: boolean
+        directions?: ResizableNodeViewDirection[]
+        minWidth?: number
+        minHeight?: number
+        alwaysPreserveAspectRatio?: boolean
       }
-    | false;
+    | false
 }
 
 export interface SetImageOptions {
-  src: string;
-  alt?: string;
-  title?: string;
-  width?: number;
-  height?: number;
+  src: string
+  alt?: string
+  title?: string
+  width?: number
+  height?: number
 }
 
-declare module "@tiptap/core" {
+declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     image: {
       /**
@@ -63,23 +62,22 @@ declare module "@tiptap/core" {
        *   .commands
        *   .setImage({ src: 'https://tiptap.dev/logo.png', alt: 'tiptap', title: 'tiptap logo' })
        */
-      setImage: (options: SetImageOptions) => ReturnType;
-    };
+      setImage: (options: SetImageOptions) => ReturnType
+    }
   }
 }
 
 /**
  * Matches an image to a ![image](src "title") on input.
  */
-export const inputRegex =
-  /(?:^|\s)(!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\))$/;
+export const inputRegex = /(?:^|\s)(!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\))$/
 
 /**
  * This extension allows you to insert images.
  * @see https://www.tiptap.dev/api/nodes/image
  */
 export const Image = Node.create<ImageOptions>({
-  name: "image",
+  name: 'image',
 
   addOptions() {
     return {
@@ -87,15 +85,15 @@ export const Image = Node.create<ImageOptions>({
       allowBase64: false,
       HTMLAttributes: {},
       resize: false,
-    };
+    }
   },
 
   inline() {
-    return this.options.inline;
+    return this.options.inline
   },
 
   group() {
-    return this.options.inline ? "inline" : "block";
+    return this.options.inline ? 'inline' : 'block'
   },
 
   draggable: true,
@@ -117,44 +115,39 @@ export const Image = Node.create<ImageOptions>({
       height: {
         default: null,
       },
-    };
+    }
   },
 
   parseHTML() {
     return [
       {
-        tag: this.options.allowBase64
-          ? "img[src]"
-          : 'img[src]:not([src^="data:"])',
+        tag: this.options.allowBase64 ? 'img[src]' : 'img[src]:not([src^="data:"])',
       },
-    ];
+    ]
   },
 
   renderHTML({ HTMLAttributes }) {
-    return [
-      "img",
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
-    ];
+    return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
   },
 
   parseMarkdown: (token, helpers) => {
-    return helpers.createNode("image", {
+    return helpers.createNode('image', {
       src: token.href,
       title: token.title,
       alt: token.text,
-    });
+    })
   },
 
   renderMarkdown: (node) => {
-    const src = node.attrs?.src ?? "";
-    const alt = node.attrs?.alt ?? "";
-    const title = node.attrs?.title ?? "";
+    const src = node.attrs?.src ?? ''
+    const alt = node.attrs?.alt ?? ''
+    const title = node.attrs?.title ?? ''
 
-    return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
+    return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`
   },
 
   addNodeView() {
-    return VueNodeViewRenderer(ImageComponent);
+    return VueNodeViewRenderer(ImageComponent)
   },
 
   addCommands() {
@@ -165,9 +158,9 @@ export const Image = Node.create<ImageOptions>({
           return commands.insertContent({
             type: this.name,
             attrs: options,
-          });
+          })
         },
-    };
+    }
   },
 
   addInputRules() {
@@ -176,11 +169,11 @@ export const Image = Node.create<ImageOptions>({
         find: inputRegex,
         type: this.type,
         getAttributes: (match) => {
-          const [, , alt, src, title] = match;
+          const [, , alt, src, title] = match
 
-          return { src, alt, title };
+          return { src, alt, title }
         },
       }),
-    ];
+    ]
   },
-});
+})

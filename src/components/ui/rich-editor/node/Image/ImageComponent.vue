@@ -1,6 +1,6 @@
 <template>
   <node-view-wrapper class="inline-block relative leading-0">
-    <Resizable
+    <RichEditorResizable
       v-if="resizeConfig.enabled"
       v-model:width="width"
       v-model:height="height"
@@ -12,64 +12,54 @@
       :always-preserve-aspect-ratio="resizeConfig.alwaysPreserveAspectRatio"
       @resize-end="onResizeEnd"
     >
-      <img
-        v-bind="node.attrs"
-        class="max-w-full h-auto block"
-        :style="imageStyle"
-      />
-    </Resizable>
-    <img
-      v-else
-      v-bind="node.attrs"
-      class="max-w-full h-auto block"
-      :style="imageStyle"
-    />
+      <img v-bind="node.attrs" class="max-w-full h-auto block" :style="imageStyle" />
+    </RichEditorResizable>
+    <img v-else v-bind="node.attrs" class="max-w-full h-auto block" :style="imageStyle" />
   </node-view-wrapper>
 </template>
 
 <script setup lang="ts">
-import { nodeViewProps, NodeViewWrapper } from "@tiptap/vue-3";
-import { computed, ref } from "vue";
+import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import { computed, ref } from 'vue'
 
-import Resizable from "../../components/Resizable.vue";
+import RichEditorResizable from '../../RichEditorResizable.vue'
 
-const props = defineProps(nodeViewProps);
+const props = defineProps(nodeViewProps)
 
-const width = ref<number | string>(props.node.attrs.width || "auto");
-const height = ref<number | string>(props.node.attrs.height || "auto");
+const width = ref<number | string>(props.node.attrs.width || 'auto')
+const height = ref<number | string>(props.node.attrs.height || 'auto')
 
 const resizeConfig = computed(() => {
-  const resize = props.extension.options.resize;
-  if (!resize) return { enabled: false };
-  if (typeof resize === "object") {
+  const resize = props.extension.options.resize
+  if (!resize) return { enabled: false }
+  if (typeof resize === 'object') {
     return {
       enabled: resize.enabled !== false,
       directions: resize.directions,
       minWidth: resize.minWidth,
       minHeight: resize.minHeight,
       alwaysPreserveAspectRatio: resize.alwaysPreserveAspectRatio,
-    };
+    }
   }
-  return { enabled: !!resize };
-});
+  return { enabled: !!resize }
+})
 
 const imageStyle = computed(() => {
   return {
-    width: typeof width.value === "number" ? `${width.value}px` : width.value,
-    height:
-      typeof height.value === "number" ? `${height.value}px` : height.value,
-  };
-});
+    width: typeof width.value === 'number' ? `${width.value}px` : width.value,
+    height: typeof height.value === 'number' ? `${height.value}px` : height.value,
+  }
+})
 
 const onResizeEnd = (size: { width: number; height: number }) => {
   props.updateAttributes({
     width: size.width,
     height: size.height,
-  });
-};
+  })
+}
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .node-view-wrapper {
   display: inline-block;
   line-height: 0;

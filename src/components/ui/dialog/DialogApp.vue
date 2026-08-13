@@ -7,6 +7,16 @@
       class="max-w-screen!"
       :style="{ width: contentWidth }"
       :show-close-button="showCloseButton"
+      @escape-key-down="
+        (event) => {
+          if (!closeOnEscape) event.preventDefault()
+        }
+      "
+      @interact-outside="
+        (event) => {
+          if (!closeOnInteractOutside) event.preventDefault()
+        }
+      "
     >
       <UiDialogHeader v-if="title || $slots.title || description || $slots.description">
         <UiDialogTitle v-if="$slots.title"><slot name="title" /></UiDialogTitle>
@@ -30,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { HTMLAttributes } from 'vue'
+import { type HTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
 
@@ -40,6 +50,8 @@ const {
   description,
   size,
   showCloseButton = true,
+  closeOnInteractOutside = true,
+  closeOnEscape = true,
 } = defineProps<{
   /** 宽度 */
   size?: number | string
@@ -49,6 +61,10 @@ const {
   description?: string
   /** 是否显示关闭按钮，默认显示 */
   showCloseButton?: boolean
+  /** 是否允许点击外部区域关闭，默认允许 */
+  closeOnInteractOutside?: boolean
+  /** 是否允许按 Escape 关闭，默认允许 */
+  closeOnEscape?: boolean
   /** 内容区域class名 */
   bodyClass?: HTMLAttributes['class']
 }>()
