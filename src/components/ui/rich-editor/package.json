@@ -1,0 +1,39 @@
+{
+  "name": "@commeth/rich-editor",
+  "version": "0.1.0-alpha.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "fnm exec -- vite build",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "ant-design-vue": "^4.2.6",
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@commeth/hooks": "^0.2.1",
+    "@commeth/utils": "^0.1.0",
+    "@iconify/vue": "^5.0.0",
+    "@tiptap/core": "^3.15.3",
+    "@tiptap/extension-image": "^3.15.3",
+    "@tiptap/extension-list": "^3.15.3",
+    "@tiptap/extension-text-style": "^3.15.3",
+    "@tiptap/pm": "^3.15.3",
+    "@tiptap/starter-kit": "^3.15.3",
+    "@tiptap/vue-3": "^3.15.3",
+    "@vueuse/core": "^14.1.0",
+    "culori": "^4.0.2",
+    "es-toolkit": "^1.44.0",
+    "reka-ui": "^2.7.0",
+    "vue-color": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/culori": "^4.0.1",
+    "ant-design-vue": "^4.2.6",
+    "vite-plugin-lib-inject-css": "^2.2.2"
+  }
+}

@@ -35,7 +35,7 @@ const dotVariants = cva('', {
     :data-shape="shape"
     :as="as"
     :as-child="asChild"
-    :class="cn(tagVariants({ color, shape }), props.class)"
+    :class="cn(tagVariants({ color, shape, border }), props.class)"
   >
     <div v-if="props.dot" class="size-1.5 rounded-full" :class="dotVariants({ color })"></div>
     <slot></slot>

@@ -10,7 +10,7 @@ export const tagVariants = cva(
   {
     variants: {
       color: {
-        default: 'border-separator bg-[#F1F5F9] text-foreground-4',
+        default: 'border-border bg-[#F1F5F9] text-foreground-4',
         blue: 'border-blue-border bg-blue text-blue-foreground',
         success: 'border-success-border bg-success text-success-foreground',
         warning: 'border-warning-border bg-warning text-warning-foreground',

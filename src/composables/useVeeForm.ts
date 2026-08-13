@@ -1,7 +1,7 @@
-import { toTypedSchema } from '@vee-validate/zod';
-import { cloneDeep } from 'es-toolkit';
-import { useForm, type GenericObject } from 'vee-validate';
-import { z } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod'
+import { cloneDeep } from 'es-toolkit'
+import { useForm, type GenericObject } from 'vee-validate'
+import { z } from 'zod'
 
 /** Vee 表单逻辑处理钩子参数 */
 export interface UseVeeFormOptions<TSchema extends z.ZodType<GenericObject, GenericObject>, R> {
@@ -10,15 +10,15 @@ export interface UseVeeFormOptions<TSchema extends z.ZodType<GenericObject, Gene
    * @param arg
    * @returns
    */
-  request: (params: z.output<TSchema>) => Promise<R>;
+  request: (params: z.output<TSchema>) => Promise<R>
   /**
    * 表单默认值
    */
-  initialValues: Partial<z.input<TSchema>>;
+  initialValues: Partial<z.input<TSchema>>
   /**
    * zod 校验 schema
    */
-  schema: MaybeRefOrGetter<TSchema>;
+  schema: MaybeRefOrGetter<TSchema>
 }
 
 /**
@@ -27,29 +27,30 @@ export interface UseVeeFormOptions<TSchema extends z.ZodType<GenericObject, Gene
 export function useVeeForm<TSchema extends z.ZodType<GenericObject, GenericObject>, R = any>(
   opts: UseVeeFormOptions<TSchema, R>,
 ) {
-  const { request, initialValues, schema } = opts;
+  const { request, initialValues, schema } = opts
 
-  const submitting = shallowRef(false);
+  const submitting = shallowRef(false)
 
   const form = useForm<z.input<TSchema>, z.output<TSchema>>({
     validationSchema: computed(() => toTypedSchema(toValue(schema))),
     initialValues: cloneDeep(initialValues) as never,
-  });
+    keepValuesOnUnmount: true,
+  })
 
   /**
    * 提交
    */
   async function submit() {
-    const result = await form.validate();
+    const result = await form.validate()
     if (!result.valid) {
-      return Promise.reject(result.errors);
+      return Promise.reject(result.errors)
     }
 
-    submitting.value = true;
+    submitting.value = true
     try {
-      return await request(result.values as z.output<TSchema>);
+      return await request(result.values as z.output<TSchema>)
     } finally {
-      submitting.value = false;
+      submitting.value = false
     }
   }
 
@@ -60,11 +61,11 @@ export function useVeeForm<TSchema extends z.ZodType<GenericObject, GenericObjec
     const mergedValues = {
       ...(cloneDeep(initialValues) as GenericObject),
       ...(values as GenericObject | undefined),
-    };
+    }
 
     form.resetForm({
       values: mergedValues as never,
-    });
+    })
   }
 
   /**
@@ -73,9 +74,9 @@ export function useVeeForm<TSchema extends z.ZodType<GenericObject, GenericObjec
   function fieldValidFix(fields: string[]) {
     setTimeout(() => {
       fields.forEach((field) => {
-        void form.validateField(field as never);
-      });
-    }, 0);
+        void form.validateField(field as never)
+      })
+    }, 0)
   }
 
   return {
@@ -86,5 +87,5 @@ export function useVeeForm<TSchema extends z.ZodType<GenericObject, GenericObjec
     submit,
     reset,
     fieldValidFix,
-  };
+  }
 }
