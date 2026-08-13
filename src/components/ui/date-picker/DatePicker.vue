@@ -12,6 +12,22 @@ import { cn } from '@/lib/utils'
 
 import type { DisableDate } from '.'
 
+type TimeUnit = 'hour' | 'minute' | 'second'
+type TimePickerOptions = {
+  /** 时间选择器格式，决定可选择的时间列 */
+  format: string
+}
+
+const TIME_TOKEN_PATTERN = /HH|H|mm|m|ss|s/g
+const TIME_TOKEN_UNIT_MAP: Record<string, TimeUnit> = {
+  H: 'hour',
+  HH: 'hour',
+  m: 'minute',
+  mm: 'minute',
+  s: 'second',
+  ss: 'second',
+}
+
 const modelValue = defineModel<string>()
 const {
   valueFormat,
@@ -35,8 +51,8 @@ const {
   disabled?: boolean
   /** 是否只读，只读时不可打开或修改日期 */
   readonly?: boolean
-  /** 是否启用时间选择 */
-  enableTimePicker?: boolean
+  /** 是否启用时间选择；传入 format 可控制可选精度，例如 { format: 'HH:mm' } */
+  enableTimePicker?: boolean | TimePickerOptions
   /** 禁用日期 */
   disableDate?: DisableDate
   /** 禁用时间 */
@@ -71,36 +87,55 @@ const emits = defineEmits<{
  */
 const innerValue = ref<DateValue>()
 const timeValue = ref<WheelPickerValue[]>(['00', '00', '00'])
+const timePickerFormat = computed(() =>
+  typeof enableTimePicker === 'object' ? enableTimePicker.format : 'HH:mm:ss',
+)
+const timeUnits = computed<TimeUnit[]>(() => {
+  const usedUnits = new Set<TimeUnit>()
+  return (timePickerFormat.value.match(TIME_TOKEN_PATTERN) ?? []).reduce<TimeUnit[]>(
+    (units, token) => {
+      const unit = TIME_TOKEN_UNIT_MAP[token]
+      if (unit && !usedUnits.has(unit)) {
+        usedUnits.add(unit)
+        units.push(unit)
+      }
+      return units
+    },
+    [],
+  )
+})
+const hasTimePicker = computed(() => Boolean(enableTimePicker))
 const effectiveValueFormat = computed<DatePickerProps['valueFormat']>(
-  () => valueFormat ?? (enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'),
+  () =>
+    valueFormat ?? (hasTimePicker.value ? `YYYY-MM-DD ${timePickerFormat.value}` : 'YYYY-MM-DD'),
 )
 /** 禁用的时间 */
 const disabledTime = computed(() => {
-  if (!enableTimePicker || !disableTime) return {}
+  if (!hasTimePicker.value || !disableTime) return {}
 
   const selectedDate = innerValue.value ?? today(getLocalTimeZone())
   return disableTime(getSelectedDate(selectedDate))
 })
-const timeColumns = computed<WheelPickerGroupColumn[]>(() => [
-  {
-    options: Array.from({ length: 24 }, (_, i) => {
+const timeColumns = computed<WheelPickerGroupColumn[]>(() =>
+  timeUnits.value.map((unit) => ({
+    options: Array.from({ length: unit === 'hour' ? 24 : 60 }, (_, i) => {
       const value = String(i).padStart(2, '0')
-      return { label: value, value, disabled: disabledTime.value.hour?.includes(i) }
+      return { label: value, value, disabled: disabledTime.value[unit]?.includes(i) }
     }),
+  })),
+)
+const selectedTimeValue = computed<WheelPickerValue[]>({
+  get: () => timeUnits.value.map((unit) => timeValue.value[timeUnitIndex(unit)] ?? '00'),
+  set: (value) => {
+    timeUnits.value.forEach((unit, index) => {
+      timeValue.value[timeUnitIndex(unit)] = value[index] ?? '00'
+    })
   },
-  {
-    options: Array.from({ length: 60 }, (_, i) => {
-      const value = String(i).padStart(2, '0')
-      return { label: value, value, disabled: disabledTime.value.minute?.includes(i) }
-    }),
-  },
-  {
-    options: Array.from({ length: 60 }, (_, i) => {
-      const value = String(i).padStart(2, '0')
-      return { label: value, value, disabled: disabledTime.value.second?.includes(i) }
-    }),
-  },
-])
+})
+
+function timeUnitIndex(unit: TimeUnit) {
+  return unit === 'hour' ? 0 : unit === 'minute' ? 1 : 2
+}
 
 /**
  * 将任意日期值归一化为本地日期，忽略其时间部分。
@@ -188,7 +223,7 @@ function parseModelValue(v: string) {
   return date.isValid() ? parseDate(date.format('YYYY-MM-DD')) : undefined
 }
 function syncTimeValue(v: string) {
-  if (!enableTimePicker) return
+  if (!hasTimePicker.value) return
 
   const date = ['timestamp', 'msTimestamp'].includes(effectiveValueFormat.value ?? '')
     ? dayjs(effectiveValueFormat.value === 'timestamp' ? Number(v) * 1000 : Number(v))
@@ -246,7 +281,7 @@ function valueChanged(v?: DateValue) {
     emits('change', undefined)
     return
   }
-  open.value = enableTimePicker
+  open.value = hasTimePicker.value
   const value = formatModelValue(v)
   modelValue.value = value
   emits('change', cloneDeep(value))
@@ -274,7 +309,7 @@ function clear() {
 const dateShow = computed(() => {
   if (modelValue.value === undefined || modelValue.value === '' || !innerValue.value) return
   return getSelectedDate(innerValue.value).format(
-    enableTimePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD',
+    hasTimePicker.value ? `YYYY-MM-DD ${timePickerFormat.value}` : 'YYYY-MM-DD',
   )
 })
 </script>
@@ -323,16 +358,16 @@ const dateShow = computed(() => {
           locale="zh-CN"
           @update:model-value="valueChanged"
         />
-        <div v-if="enableTimePicker" class="flex flex-col border-l px-3 py-4">
+        <div v-if="hasTimePicker" class="flex flex-col border-l px-3 py-4">
           <UiWheelPickerGroup
-            v-model="timeValue"
+            v-model="selectedTimeValue"
             :columns="timeColumns"
             :visible-option-count="3"
             @change="timeChanged"
           />
         </div>
       </div>
-      <div v-if="enableTimePicker" class="text-right p-2 border-t">
+      <div v-if="hasTimePicker" class="text-right p-2 border-t">
         <UiButton size="xs" theme="brand" :disabled="!innerValue" @click="confirm()">
           确定
         </UiButton>

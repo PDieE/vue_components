@@ -11,7 +11,7 @@
       <UiInputGroup class="cursor-pointer" @click="toAMap()">
         <UiInputGroupInput
           class="cursor-pointer"
-          :model-value="showLabel ? showLabel : undefined"
+          :model-value="showLabel ? showLabel : initialAddress"
           placeholder="从地图选择地址"
           readonly
         />
@@ -26,18 +26,18 @@
       <MapSelectContainer
         ref="aMapContainerRef"
         :position="
-          showData.longitude && showData.latitude
-            ? [Number(showData.longitude), Number(showData.latitude)]
+          modelValue.longitude && modelValue.latitude
+            ? [Number(modelValue.longitude), Number(modelValue.latitude)]
             : undefined
         "
         :positionLabel="showLabel"
-        :readonly="props.readonly"
+        :readonly="readonly"
       />
     </div>
-    <template v-if="!props.readonly" #footer>
+    <template v-if="!readonly" #footer>
       <UiDialogClose as-child>
         <UiButton class="min-w-20" variant="outline">
-          {{ props.readonly ? '关闭' : '取消' }}
+          {{ readonly ? '关闭' : '取消' }}
         </UiButton>
       </UiDialogClose>
       <UiButton class="min-w-20" theme="brand" :loading="finishLoading" @click="onFinish">
@@ -48,41 +48,48 @@
 </template>
 
 <script lang="ts" setup>
-/* eslint-disable @typescript-eslint/no-explicit-any -- The AMap SDK exposes dynamic payloads. */
 import { Icon } from '@iconify/vue'
-import { get, reduce } from 'es-toolkit/compat'
+import { get } from 'es-toolkit/compat'
 import { useTemplateRef, ref, computed, unref, nextTick } from 'vue'
 import { toast } from 'vue-sonner'
 
 import { MapSelectContainer } from './'
 
-type FieldsType =
-  | 'adcode' // 地区编码
-  | 'province' // 省份
-  | 'city' // 城市
-  | 'district' // 区域
-  | 'township' // 街道
-  | 'address' // 详细地址
-  | 'formattedAddress' // 格式化地址 (省市区街道)
-  | 'longitude' // 经度
-  | 'latitude' // 纬度
-
-type ValueType = number | string
-type ValueState = ValueType[]
-interface Props {
-  valueKey: FieldsType | FieldsType[]
-  size?: 'small' | 'middle' | 'large'
-  /** 初始地址 */
-  initialAddress?: string
-  /** 是否只读，只读时仅可查看地图并关闭弹窗 */
-  readonly?: boolean
+interface ValueState {
+  /** 地区编码 */
+  adcode?: string
+  /** 省份 */
+  province?: string
+  /** 城市 */
+  city?: string
+  /** 区域 */
+  district?: string
+  /** 街道 */
+  township?: string
+  /** 详细地址 */
+  address?: string
+  /** 格式化地址（省市区街道） */
+  formattedAddress?: string
+  /** 经度 */
+  longitude?: number
+  /** 纬度 */
+  latitude?: number
 }
+
 defineOptions({ name: 'AMapSelect' })
-const props = withDefaults(defineProps<Props>(), {
-  valueKey: () => [],
-  readonly: false,
+const {
+  /** 初始地址 */
+  initialAddress,
+  /** 是否只读，只读时仅可查看地图并关闭弹窗 */
+  readonly = false,
+} = defineProps<{
+  size?: 'small' | 'middle' | 'large'
+  initialAddress?: string
+  readonly?: boolean
+}>()
+const modelValue = defineModel<Partial<ValueState>>({
+  default: () => ({}),
 })
-const modelValue = defineModel<ValueState>('value', { default: () => [] })
 const emits = defineEmits<{
   change: [value: ValueState]
 }>()
@@ -93,50 +100,30 @@ const emits = defineEmits<{
  * ====================
  */
 const aMapContainerRef = useTemplateRef('aMapContainerRef')
-const showFields = computed(() => {
-  if (typeof props.valueKey === 'string') {
-    return props.valueKey.split(',')
-  }
-
-  return props.valueKey
-})
-
 const finishLoading = ref<boolean>(false)
 
-// 根据 state 值展示 ui
-const showData = computed(() => {
-  const r = reduce(
-    showFields.value,
-    (acc, key, index) => {
-      acc[key] = modelValue.value[index]
-      return acc
-    },
-    {} as any,
-  )
-  return r
-})
 const showLabel = computed(() => {
   return (
-    showData.value.formattedAddress ||
+    modelValue.value.formattedAddress ||
     [
-      showData.value.province,
-      showData.value.city,
-      showData.value.district,
-      showData.value.township,
-      showData.value.address,
+      modelValue.value.province,
+      modelValue.value.city,
+      modelValue.value.district,
+      modelValue.value.township,
+      modelValue.value.address,
     ]
       .filter(Boolean)
       .join('') ||
-    ' '
+    ''
   )
 })
 
 const visible = ref<boolean>(false)
 /** 打开地图选择 */
 async function toAMap() {
-  if (!modelValue.value?.length && props.initialAddress) {
+  if (!modelValue.value.formattedAddress && initialAddress) {
     await nextTick()
-    aMapContainerRef.value?.setAddress(props.initialAddress)
+    aMapContainerRef.value?.setAddress(initialAddress)
   }
 }
 /** 确认选择 */
@@ -156,21 +143,13 @@ async function onFinish() {
   }
 }
 /** 处理并保存数据 */
-function save(v: unknown) {
+function save(value: ValueState) {
   visible.value = false
-  const r = reduce(
-    showFields.value,
-    (acc, current) => {
-      acc.push(get(v, current, '') ?? '')
-      return acc
-    },
-    [] as string[],
-  )
-  modelValue.value = r
-  emits('change', r)
+  modelValue.value = value
+  emits('change', value)
 }
 /** 格式化数据 */
-function formatData(v: unknown) {
+function formatData(v: unknown): ValueState {
   const adcode = get(v, 'extData.addressComponent.adcode', '')
   const province = get(v, 'extData.addressComponent.province', '')
   const city = get(v, 'extData.addressComponent.city', '')

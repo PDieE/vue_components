@@ -29,6 +29,20 @@ description: 选择单个日期。
 </template>
 ```
 
+## 时间选择
+
+`enableTimePicker` 传入 `true` 时可选择时、分、秒。也可以传入 `format` 控制精度：`HH` 仅选择小时，`HH:mm` 选择小时和分钟。
+
+```vue
+<template>
+  <UiDatePicker v-model="dateTime" :enable-time-picker="true" />
+  <UiDatePicker v-model="dateHour" :enable-time-picker="{ format: 'HH' }" />
+  <UiDatePicker v-model="dateMinute" :enable-time-picker="{ format: 'HH:mm' }" />
+</template>
+```
+
+未传 `valueFormat` 时，值格式会跟随时间格式，例如 `HH:mm` 输出 `YYYY-MM-DD HH:mm`。
+
 ## 禁用日期
 
 `disableDate` 只影响日期选择，不会限制时间选择器。它支持指定日期数组、日期区间对象或回调函数。
