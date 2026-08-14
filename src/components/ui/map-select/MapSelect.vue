@@ -53,28 +53,7 @@ import { get } from 'es-toolkit/compat'
 import { useTemplateRef, ref, computed, unref, nextTick } from 'vue'
 import { toast } from 'vue-sonner'
 
-import { MapSelectContainer } from './'
-
-interface ValueState {
-  /** 地区编码 */
-  adcode?: string
-  /** 省份 */
-  province?: string
-  /** 城市 */
-  city?: string
-  /** 区域 */
-  district?: string
-  /** 街道 */
-  township?: string
-  /** 详细地址 */
-  address?: string
-  /** 格式化地址（省市区街道） */
-  formattedAddress?: string
-  /** 经度 */
-  longitude?: number
-  /** 纬度 */
-  latitude?: number
-}
+import { MapSelectContainer, type MapSelectValue } from './'
 
 defineOptions({ name: 'AMapSelect' })
 const {
@@ -87,11 +66,11 @@ const {
   initialAddress?: string
   readonly?: boolean
 }>()
-const modelValue = defineModel<Partial<ValueState>>({
+const modelValue = defineModel<Partial<MapSelectValue>>({
   default: () => ({}),
 })
 const emits = defineEmits<{
-  change: [value: ValueState]
+  change: [value: MapSelectValue]
 }>()
 
 /**
@@ -143,13 +122,13 @@ async function onFinish() {
   }
 }
 /** 处理并保存数据 */
-function save(value: ValueState) {
+function save(value: MapSelectValue) {
   visible.value = false
   modelValue.value = value
   emits('change', value)
 }
 /** 格式化数据 */
-function formatData(v: unknown): ValueState {
+function formatData(v: unknown): MapSelectValue {
   const adcode = get(v, 'extData.addressComponent.adcode', '')
   const province = get(v, 'extData.addressComponent.province', '')
   const city = get(v, 'extData.addressComponent.city', '')

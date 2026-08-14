@@ -7,6 +7,7 @@
     <UiSheetContent
       class="gap-0"
       :style="{ width: contentWidth }"
+      :z-index="zIndex"
       :closable="closable"
       @escape-key-down="
         (event: Event) => {
@@ -50,12 +51,15 @@ const {
   title,
   description,
   size,
+  zIndex,
   closable = true,
   closeOnInteractOutside = false,
   closeOnEscape = true,
 } = defineProps<{
   /** 宽度 */
   size?: number | string
+  /** 层级索引 */
+  zIndex?: number
   /** 标题 */
   title?: string
   /** 描述 */

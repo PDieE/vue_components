@@ -13,6 +13,8 @@ import SheetOverlay from './SheetOverlay.vue'
 interface SheetContentProps extends DialogContentProps {
   class?: HTMLAttributes['class']
   side?: 'top' | 'right' | 'bottom' | 'left'
+  /** 层级索引 */
+  zIndex?: number
   /** 是否显示关闭按钮，默认显示 */
   closable?: boolean
 }
@@ -27,17 +29,18 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
 })
 const emits = defineEmits<DialogContentEmits>()
 
-const delegatedProps = reactiveOmit(props, 'class', 'side')
+const delegatedProps = reactiveOmit(props, 'class', 'side', 'zIndex')
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
   <DialogPortal>
-    <SheetOverlay />
+    <SheetOverlay :style="{ zIndex: props.zIndex ?? undefined }" />
     <DialogContent
       data-slot="sheet-content"
       v-bind="{ ...$attrs, ...forwarded }"
+      :style="{ zIndex: props.zIndex ?? undefined }"
       @interact-outside="
         (event) => {
           if (isOverlayInteractExempt(event.target)) event.preventDefault()
