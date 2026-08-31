@@ -6,6 +6,7 @@
     <UiDialogContent
       class="max-w-screen!"
       :style="{ width: contentWidth }"
+      :z-index="zIndex"
       :show-close-button="showCloseButton"
       @escape-key-down="
         (event) => {
@@ -49,12 +50,15 @@ const {
   title,
   description,
   size,
+  zIndex,
   showCloseButton = true,
   closeOnInteractOutside = true,
   closeOnEscape = true,
 } = defineProps<{
   /** 宽度 */
   size?: number | string
+  /** 层级索引 */
+  zIndex?: number
   /** 标题 */
   title?: string
   /** 描述 */

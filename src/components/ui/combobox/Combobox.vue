@@ -113,7 +113,7 @@ const selectedOptions = computed(() =>
 )
 const queryId = useId()
 const { data, status } = useQuery<TData[]>({
-  queryKey: computed(() => ['ui-combobox', queryId, api, params]),
+  queryKey: computed(() => ['ui-combobox', queryId, params]),
   queryFn: () => (api ? api(params) : Promise.resolve([])),
   staleTime: 0,
   gcTime: 0,

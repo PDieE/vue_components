@@ -172,8 +172,22 @@ import RichEditorColor from './RichEditorColor.vue'
 import RichEditorSelect from './RichEditorSelect.vue'
 import type { RichEditorProps, RichEditorSelectOption } from './types'
 
+defineOptions({ inheritAttrs: false })
+
 const innerValue = defineModel<string>('modelValue', { default: '' })
+const emit = defineEmits<{
+  /**
+   * 编辑器失去焦点时触发
+   * @param event 事件对象
+   */
+  blur: [event: FocusEvent]
+}>()
+
 watch(innerValue, (val) => {
+  if (typeof val !== 'string') {
+    return
+  }
+
   const isSame = editor.value?.getHTML() === val
   if (isSame) {
     return
@@ -259,8 +273,9 @@ function init() {
     onFocus: () => {
       isFocused.value = true
     },
-    onBlur: () => {
+    onBlur: ({ event }) => {
       isFocused.value = false
+      emit('blur', event)
     },
     onSelectionUpdate(props) {
       onTextColorSelectionUpdate(props)
@@ -369,19 +384,12 @@ function imageUploadChange() {
   if (!imageUploadRef.value) {
     return
   }
-  const files = imageUploadRef.value.files
-  if (!files || !files.length) {
+  const files = Array.from(imageUploadRef.value.files ?? [])
+  if (!files.length) {
     return
   }
   for (const file of files) {
     editor.value?.chain().focus().setImageUpload({ file }).run()
-    editor.value
-      ?.chain()
-      .setTextSelection({
-        from: editor.value.state.selection.from + 1,
-        to: editor.value.state.selection.from + 1,
-      })
-      .run()
   }
 }
 </script>

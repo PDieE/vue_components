@@ -18,6 +18,7 @@
               : readonly
                 ? 'cursor-default'
                 : 'cursor-not-allowed opacity-60',
+            triggerClass,
           )
         "
         :style="triggerStyle"
@@ -236,9 +237,12 @@ const {
   readonly = false,
   autoUpload = true,
   showUploadButton = true,
+  triggerClass,
   ...props
 } = defineProps<{
   class?: HTMLAttributes['class']
+  /** 触发上传的元素类名，默认为空字符串 */
+  triggerClass?: HTMLAttributes['class']
   /** 每个元素的尺寸，数字表示宽高一致；数组第一个为宽，第二个为高。默认为 80 */
   size?: number | [number, number]
   /** 上传文件大小限制，单位为字节 */

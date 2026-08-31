@@ -81,7 +81,7 @@ const columns = computed(() => {
 })
 const queryId = useId()
 const { data, status } = useQuery<TData[]>({
-  queryKey: computed(() => ['ui-combobox-cascader', queryId, api, params]),
+  queryKey: computed(() => ['ui-combobox-cascader', queryId, params]),
   queryFn: () => (api ? api(params as TParams) : Promise.resolve([])),
   staleTime: 0,
   gcTime: 0,

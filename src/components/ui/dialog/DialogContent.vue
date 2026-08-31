@@ -16,7 +16,12 @@ defineOptions({
 
 const props = withDefaults(
   defineProps<
-    DialogContentProps & { class?: HTMLAttributes['class']; showCloseButton?: boolean }
+    DialogContentProps & {
+      class?: HTMLAttributes['class']
+      /** 层级索引 */
+      zIndex?: number
+      showCloseButton?: boolean
+    }
   >(),
   {
     showCloseButton: true,
@@ -24,17 +29,18 @@ const props = withDefaults(
 )
 const emits = defineEmits<DialogContentEmits>()
 
-const delegatedProps = reactiveOmit(props, 'class')
+const delegatedProps = reactiveOmit(props, 'class', 'zIndex')
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay :style="{ zIndex: props.zIndex ?? undefined }" />
     <DialogContent
       data-slot="dialog-content"
       v-bind="{ ...$attrs, ...forwarded }"
+      :style="{ zIndex: props.zIndex ?? undefined }"
       @interact-outside="
         (event) => {
           if (isOverlayInteractExempt(event.target)) event.preventDefault()

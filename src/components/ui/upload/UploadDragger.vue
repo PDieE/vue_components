@@ -185,6 +185,9 @@ import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
+import { cn } from '@/lib/utils'
+
+import type { UploadFile } from '.'
 import FileExcelIcon from './svg/file-excel.svg'
 import FileGenericIcon from './svg/file-generic.svg'
 import FileImageIcon from './svg/file-image.svg'
@@ -192,9 +195,6 @@ import FilePdfIcon from './svg/file-pdf.svg'
 import FilePptIcon from './svg/file-ppt.svg'
 import FileWordIcon from './svg/file-word.svg'
 import UploadFolderIcon from './svg/upload-folder.svg'
-import { cn } from '@/lib/utils'
-
-import type { UploadFile } from '.'
 
 /** accept 属性的对象形式 */
 interface Accept {
@@ -234,7 +234,7 @@ const {
   autoUpload = true,
   showUploadButton = true,
   showFileList = true,
-  uploadDir = '',
+  uploadDir,
   ...props
 } = defineProps<{
   class?: HTMLAttributes['class']
