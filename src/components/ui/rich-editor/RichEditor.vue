@@ -1,0 +1,502 @@
+<template>
+  <div
+    v-if="editor"
+    :id="id"
+    class="overflow-hidden rounded-3px border border-border transition-all hover:border-brand"
+    :class="{
+      'border-brand shadow-[0_0_0_2px_var(--brand-bg)]': isFocused,
+    }"
+  >
+    <ToolbarRoot
+      class="sticky top-0 z-1 flex flex-wrap items-center gap-1 border-0 border-b border-border bg-white p-1"
+    >
+      <!-- 撤销/重做 -->
+      <RichEditorButton
+        tip="撤销"
+        :disabled="!editor.can().chain().focus().undo().run()"
+        @click="editor.chain().focus().undo().run()"
+      >
+        <template #icon><Icon icon="tdesign:rollback" inline /></template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="重做"
+        :disabled="!editor.can().chain().focus().redo().run()"
+        @click="editor.chain().focus().redo().run()"
+      >
+        <template #icon><Icon icon="tdesign:rollfront" inline /></template>
+      </RichEditorButton>
+      <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
+      <!-- 字体样式 -->
+      <RichEditorSelect tip="段落/标题" :options="headingOptions">
+        <template #icon><Icon icon="tdesign:clear" inline /></template>
+      </RichEditorSelect>
+      <RichEditorButton
+        tip="加粗"
+        :active="editor.isActive('bold')"
+        :disabled="!editor.can().chain().focus().toggleBold().run()"
+        @click="editor.chain().focus().toggleBold().run()"
+      >
+        <template #icon>
+          <Icon icon="tdesign:textformat-bold" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="斜体"
+        :active="editor.isActive('italic')"
+        :disabled="!editor.can().chain().focus().toggleItalic().run()"
+        @click="editor.chain().focus().toggleItalic().run()"
+      >
+        <template #icon>
+          <Icon icon="tdesign:textformat-italic" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="删除线"
+        :active="editor.isActive('strike')"
+        :disabled="!editor.can().chain().focus().toggleStrike().run()"
+        @click="editor.chain().focus().toggleStrike().run()"
+      >
+        <template #icon>
+          <Icon icon="tdesign:textformat-strikethrough" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="行内代码"
+        :active="editor.isActive('code')"
+        :disabled="!editor.can().chain().focus().toggleCode().run()"
+        @click="editor.chain().focus().toggleCode().run()"
+      >
+        <template #icon><Icon icon="tdesign:code-1" inline /></template>
+      </RichEditorButton>
+      <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
+      <!-- 格式/节点清除 -->
+      <RichEditorButton tip="清除格式" @click="editor.chain().focus().unsetAllMarks().run()">
+        <template #icon>
+          <Icon icon="tdesign:clear-formatting" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton tip="清除节点" @click="editor.chain().focus().clearNodes().run()">
+        <template #icon><Icon icon="tdesign:clear" inline /></template>
+      </RichEditorButton>
+      <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
+      <!-- 其他样式 -->
+      <RichEditorButton
+        tip="无序列表"
+        :active="editor.isActive('bulletList')"
+        @click="editor.chain().focus().toggleBulletList().run()"
+      >
+        <template #icon><Icon icon="tdesign:list" inline /></template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="有序列表"
+        :active="editor.isActive('orderedList')"
+        @click="editor.chain().focus().toggleOrderedList().run()"
+      >
+        <template #icon>
+          <Icon icon="tdesign:list-numbered" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="代码块"
+        :active="editor.isActive('codeBlock')"
+        @click="editor.chain().focus().toggleCodeBlock().run()"
+      >
+        <template #icon><Icon icon="tdesign:code" inline /></template>
+      </RichEditorButton>
+      <RichEditorButton
+        tip="块引用"
+        :active="editor.isActive('blockquote')"
+        @click="editor.chain().focus().toggleBlockquote().run()"
+      >
+        <template #icon><Icon icon="tdesign:quote" inline /></template>
+      </RichEditorButton>
+      <RichEditorButton tip="分割线" @click="editor.chain().focus().setHorizontalRule().run()">
+        <template #icon>
+          <Icon icon="tdesign:component-divider-vertical" inline />
+        </template>
+      </RichEditorButton>
+      <RichEditorButton tip="强制换行" @click="editor.chain().focus().setHardBreak().run()">
+        <template #icon><Icon icon="tdesign:enter" inline /></template>
+      </RichEditorButton>
+      <RichEditorColor
+        icon="tdesign:textformat-color"
+        :color="textColor"
+        tip="字体颜色"
+        @confirm="setTextColor"
+      />
+      <RichEditorButton tip="添加图片" @click="addImage()">
+        <template #icon><Icon icon="tdesign:image-add" inline /></template>
+      </RichEditorButton>
+      <input
+        ref="imageUploadRef"
+        class="hidden"
+        type="file"
+        :accept="imageUpload?.accept || 'image/*'"
+        multiple
+        @change="imageUploadChange"
+      />
+    </ToolbarRoot>
+    <editor-content
+      class="p-2 min-h-[var(--content-min-height)] max-h-[var(--content-max-height)] h-[var(--content-height)] overflow-y-auto"
+      :style="contentStyle"
+      :editor="editor"
+      placeholder="请输入内容"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+// import Image from "@tiptap/extension-image";
+import { ListItem } from '@tiptap/extension-list'
+import { Color, TextStyle } from '@tiptap/extension-text-style'
+import StarterKit from '@tiptap/starter-kit'
+import { Editor, EditorContent, type EditorEvents } from '@tiptap/vue-3'
+import { uniqueId } from 'es-toolkit/compat'
+import { ToolbarRoot, ToolbarSeparator } from 'reka-ui'
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  shallowRef,
+  useTemplateRef,
+  watch,
+} from 'vue'
+
+import { useProvideBridgeStore } from './injectionState'
+import { Image } from './node/Image'
+import { ImageUpload } from './node/ImageUpload'
+import RichEditorButton from './RichEditorButton.vue'
+import RichEditorColor from './RichEditorColor.vue'
+import RichEditorSelect from './RichEditorSelect.vue'
+import type { RichEditorProps, RichEditorSelectOption } from './types'
+
+defineOptions({ inheritAttrs: false })
+
+const innerValue = defineModel<string>('modelValue', { default: '' })
+const emit = defineEmits<{
+  /**
+   * 编辑器失去焦点时触发
+   * @param event 事件对象
+   */
+  blur: [event: FocusEvent]
+}>()
+
+watch(innerValue, (val) => {
+  if (typeof val !== 'string') {
+    return
+  }
+
+  const isSame = editor.value?.getHTML() === val
+  if (isSame) {
+    return
+  }
+
+  editor.value?.commands.setContent(val)
+})
+const { contentHeight = { min: 200, max: 400 }, imageUpload } = defineProps<RichEditorProps>()
+
+onMounted(() => {
+  init()
+})
+
+onBeforeUnmount(() => {
+  // 卸载前销毁编辑器
+  editor.value?.destroy()
+})
+
+/**
+ * ====================
+ *       基本逻辑
+ * ====================
+ */
+const id = shallowRef(uniqueId('editor_'))
+useProvideBridgeStore({ imageUpload, editorId: id.value })
+/** 内容主题样式 */
+const contentStyle = computed(() => {
+  if (typeof contentHeight === 'number') {
+    return {
+      '--content-min-height': 'auto',
+      '--content-max-height': 'auto',
+      '--content-height': `${contentHeight}px`,
+    }
+  }
+  if (typeof contentHeight === 'string') {
+    return {
+      '--content-min-height': 'auto',
+      '--content-max-height': 'auto',
+      '--content-height': contentHeight,
+    }
+  }
+  return {
+    '--content-min-height': `${contentHeight.min}px`,
+    '--content-max-height': `${contentHeight.max}px`,
+    '--content-height': 'auto',
+  }
+})
+provide('contentStyle', contentStyle)
+/** 编辑器实例 */
+const editor = ref<Editor>()
+const isFocused = ref(false)
+/** 初始化编辑器 */
+function init() {
+  editor.value = new Editor({
+    extensions: [
+      Color.configure({ types: [TextStyle.name, ListItem.name] }),
+      TextStyle,
+      StarterKit,
+      Image.configure({
+        resize: {
+          enabled: true,
+          directions: [
+            'top',
+            'right',
+            'bottom',
+            'left',
+            'top-right',
+            'top-left',
+            'bottom-right',
+            'bottom-left',
+          ],
+          minWidth: 30,
+          minHeight: 30,
+          alwaysPreserveAspectRatio: true,
+        },
+      }),
+      ImageUpload,
+    ],
+    content: innerValue.value,
+    onUpdate: () => {
+      innerValue.value = editor.value?.getHTML() || ''
+    },
+    onFocus: () => {
+      isFocused.value = true
+    },
+    onBlur: ({ event }) => {
+      isFocused.value = false
+      emit('blur', event)
+    },
+    onSelectionUpdate(props) {
+      onTextColorSelectionUpdate(props)
+    },
+  })
+}
+/** 段落/标题选项 */
+const headingOptions = computed<RichEditorSelectOption[]>(() => {
+  if (!editor.value) {
+    return []
+  }
+  return [
+    {
+      label: '段落',
+      value: 'paragraph',
+      icon: 'hugeicons:paragraph',
+      active: editor.value.isActive('paragraph'),
+      action: () => editor.value?.chain().focus().setParagraph().run(),
+    },
+    {
+      label: '标题 1',
+      value: 'heading-01',
+      icon: 'hugeicons:heading-01',
+      active: editor.value.isActive('heading', { level: 1 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 1 }).run(),
+    },
+    {
+      label: '标题 2',
+      value: 'heading-02',
+      icon: 'hugeicons:heading-02',
+      active: editor.value.isActive('heading', { level: 2 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 2 }).run(),
+    },
+    {
+      label: '标题 3',
+      value: 'heading-03',
+      icon: 'hugeicons:heading-03',
+      active: editor.value.isActive('heading', { level: 3 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 3 }).run(),
+    },
+    {
+      label: '标题 4',
+      value: 'heading-04',
+      icon: 'hugeicons:heading-04',
+      active: editor.value.isActive('heading', { level: 4 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 4 }).run(),
+    },
+    {
+      label: '标题 5',
+      value: 'heading-05',
+      icon: 'hugeicons:heading-05',
+      active: editor.value.isActive('heading', { level: 5 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 5 }).run(),
+    },
+    {
+      label: '标题 6',
+      value: 'heading-06',
+      icon: 'hugeicons:heading-06',
+      active: editor.value.isActive('heading', { level: 6 }),
+      action: () => editor.value?.chain().focus().toggleHeading({ level: 6 }).run(),
+    },
+  ]
+})
+
+/**
+ * ====================
+ *       字体颜色
+ * ====================
+ */
+const textColor = shallowRef<string>()
+/**
+ * 设定好字体颜色
+ * @param color 字体颜色
+ */
+function setTextColor(color?: string) {
+  textColor.value = color
+  if (!color) {
+    editor.value?.chain().focus().unsetColor().run()
+    return
+  }
+  editor.value?.chain().focus().setColor(color).run()
+}
+/**
+ * 选区变更回调 - 获取字体颜色
+ * @param props 选区变更事件参数
+ */
+function onTextColorSelectionUpdate(props: EditorEvents['selectionUpdate']) {
+  textColor.value = props.editor.getAttributes('textStyle').color ?? undefined
+}
+
+/**
+ * ====================
+ *       添加图片
+ * ====================
+ */
+const imageUploadRef = useTemplateRef<HTMLInputElement>('imageUploadRef')
+/** 添加图片 */
+function addImage() {
+  if (!imageUploadRef.value) {
+    return
+  }
+  imageUploadRef.value.value = ''
+  imageUploadRef.value.click()
+}
+function imageUploadChange() {
+  if (!imageUploadRef.value) {
+    return
+  }
+  const files = Array.from(imageUploadRef.value.files ?? [])
+  if (!files.length) {
+    return
+  }
+  for (const file of files) {
+    editor.value?.chain().focus().setImageUpload({ file }).run()
+  }
+}
+</script>
+
+<style lang="less" scoped>
+:deep(.tiptap) {
+  min-height: var(--content-min-height);
+  max-height: var(--content-max-height);
+  height: var(--content-height);
+
+  :first-child {
+    margin-top: 0;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  /* List styles */
+  ul,
+  ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+    li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
+    }
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+    margin-top: 2.5rem;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  /* Code and preformatted text styles */
+  code {
+    background-color: rgba(88, 5, 255, 0.05);
+    border-radius: 0.4rem;
+    color: #2e2b29;
+    font-size: 0.85rem;
+    padding: 0.25em 0.3em;
+  }
+
+  pre {
+    background: #2e2b29;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    margin: 1.5rem 0;
+    padding: 0.75rem 1rem;
+
+    code {
+      background: none;
+      color: inherit;
+      font-size: 0.8rem;
+      padding: 0;
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid rgba(61, 37, 20, 0.12);
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgba(61, 37, 20, 0.08);
+    margin: 2rem 0;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+</style>

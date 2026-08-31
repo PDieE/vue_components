@@ -1,0 +1,5 @@
+@import '../../../src/style.css';
+@import 'tailwindcss' important;
+
+/* VitePress runs from docs/, so include the library source explicitly. */
+@source '../../../src/components';
