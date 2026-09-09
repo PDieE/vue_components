@@ -235,13 +235,14 @@ function isInSelectedPath(option: ComboboxOptionCascader) {
 }
 
 /**
- * 生成选项渲染 key，兼容 separator 和 value 为空的场景
- * @param option 选项
- * @param level 所在列索引
+ * 生成选项内部唯一值，供渲染 key 和 CommandItem 使用。
+ * 通过列索引、项索引和值类型区分布尔值与同文本字符串等不同值。
+ * @param value 选项值
  * @param index 所在列内索引
+ * @param level 所在列索引
  */
-function getOptionKey(option: ComboboxOptionCascader, level: number, index: number) {
-  return `${level}-${option.type || 'option'}-${String(option.value ?? option.label ?? index)}`
+function getOptionValue(value: ComboboxValue | undefined, index: number, level: number) {
+  return `${level}-${index}:${typeof value}:${String(value)}`
 }
 
 /**
@@ -316,7 +317,10 @@ watch(open, (isOpen) => {
             :key="getColumnKey(column, level)"
             class="min-w-28 max-h-72 overflow-y-auto border-r last:border-r-0"
           >
-            <template v-for="(option, index) in column" :key="getOptionKey(option, level, index)">
+            <template
+              v-for="(option, index) in column"
+              :key="getOptionValue(option.value, index, level)"
+            >
               <UiCommandSeparator v-if="option.type === 'separator'" />
               <UiCommandItem
                 v-else-if="option.value !== undefined"
@@ -326,7 +330,7 @@ watch(open, (isOpen) => {
                     'bg-brand-bg-hover! hover:bg-brand-bg-hover!',
                 ]"
                 :disabled="option.disabled"
-                :value="`${level}-${String(option.value)}`"
+                :value="getOptionValue(option.value, index, level)"
                 @mouseenter="expand(option, level)"
                 @select="handleSelect(option, level)"
               >

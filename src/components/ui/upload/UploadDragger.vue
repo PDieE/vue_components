@@ -5,6 +5,7 @@
       cn(
         'group ui-upload-dragger flex w-full flex-col gap-4',
         disabled && 'is-disabled',
+        isReadonlyStyle && 'is-readonly',
         props.class,
       )
     "
@@ -13,9 +14,9 @@
       :class="
         cn(
           'flex w-full items-center justify-center gap-4 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] px-4 py-8 transition-colors',
-          !disabled && !readonly && 'cursor-pointer hover:border-brand',
-          readonly && 'cursor-default',
-          dragging && !disabled && !readonly && 'border-brand bg-brand/5',
+          !disabled && !isReadonlyStyle && 'cursor-pointer hover:border-brand',
+          isReadonlyStyle && 'cursor-default',
+          dragging && !disabled && !isReadonlyStyle && 'border-brand bg-brand/5',
           disabled && 'cursor-not-allowed opacity-60',
           'group-aria-invalid:border-destructive',
         )
@@ -185,16 +186,16 @@ import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
+import FileExcelIcon from '@/assets/svg/upload/file-excel.svg'
+import FileGenericIcon from '@/assets/svg/upload/file-generic.svg'
+import FileImageIcon from '@/assets/svg/upload/file-image.svg'
+import FilePdfIcon from '@/assets/svg/upload/file-pdf.svg'
+import FilePptIcon from '@/assets/svg/upload/file-ppt.svg'
+import FileWordIcon from '@/assets/svg/upload/file-word.svg'
+import UploadFolderIcon from '@/assets/svg/upload/upload-folder.svg'
 import { cn } from '@/lib/utils'
 
 import type { UploadFile } from '.'
-import FileExcelIcon from './svg/file-excel.svg'
-import FileGenericIcon from './svg/file-generic.svg'
-import FileImageIcon from './svg/file-image.svg'
-import FilePdfIcon from './svg/file-pdf.svg'
-import FilePptIcon from './svg/file-ppt.svg'
-import FileWordIcon from './svg/file-word.svg'
-import UploadFolderIcon from './svg/upload-folder.svg'
 
 /** accept 属性的对象形式 */
 interface Accept {
@@ -234,7 +235,7 @@ const {
   autoUpload = true,
   showUploadButton = true,
   showFileList = true,
-  uploadDir,
+  uploadDir = '',
   ...props
 } = defineProps<{
   class?: HTMLAttributes['class']
@@ -277,6 +278,7 @@ const inputRef = ref<HTMLInputElement>()
 const dragging = ref(false)
 const dragDepth = ref(0)
 const overCount = computed(() => count !== 1 && fileMap.value.size >= count)
+const isReadonlyStyle = computed(() => readonly || overCount.value)
 const acceptTip = computed(() => {
   if (!accept) {
     return sizeLimit === Infinity
@@ -298,7 +300,11 @@ const progressCircumference = 2 * Math.PI * 6
 
 /** 打开文件选择框 */
 function openFileDialog() {
-  if (disabled || readonly || overCount.value) {
+  if (overCount.value) {
+    warn(`文件数量已达到上限 ${count} 份`)
+    return
+  }
+  if (disabled || readonly) {
     return
   }
   inputRef.value?.click()
