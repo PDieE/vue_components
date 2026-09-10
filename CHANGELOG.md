@@ -15,6 +15,7 @@
 ### 🚧 Others
 
 - chore: `MapOptionValue`和`MapOption`新增布尔型
+- chore: 统一去除类输入框录入组件的阴影
 
 # 1.0.0
 

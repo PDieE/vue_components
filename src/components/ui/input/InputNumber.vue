@@ -9,30 +9,7 @@ defineOptions({
 })
 
 const modelValue = defineModel<number | string>()
-// const props = withDefaults(
-//   defineProps<{
-//     class?: HTMLAttributes['class'];
-//     /** 标题 */
-//     label?: string;
-//     /** 是否禁用 */
-//     disabled?: boolean;
-//     /** 是否只读 */
-//     readonly?: boolean;
-//     /** 最小值 */
-//     min?: number;
-//     /** 最大值 */
-//     max?: number;
-//     /** 单位 */
-//     unit?: string;
-//     /** 小数位数 */
-//     decimalPlaces?: number;
-//     /** 步长 */
-//     step?: number;
-//     /** 是否显示增减按钮 */
-//     controls?: boolean;
-//   }>(),
-//   { disabled: false, readonly: false, min: 0, max: Infinity, step: 1 },
-// );
+
 const {
   disabled = false,
   readonly = false,

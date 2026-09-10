@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TData extends object">
+<script setup lang="ts" generic="TData extends object, TParams = void">
 import { Icon } from '@iconify/vue'
 import { useQuery } from '@tanstack/vue-query'
 import { cloneDeep } from 'es-toolkit'
@@ -40,8 +40,8 @@ const {
   /** 选项 */
   options?: (ComboboxOption | TData)[]
   /** 数据获取方法 */
-  api?: (params?: unknown) => Promise<TData[]>
-  params?: unknown
+  api?: (params: TParams) => Promise<TData[]>
+  params?: TParams
   /** 字段别名 */
   keys?: { type?: string; value?: string; label?: string; disabled?: string }
   /** 占位符 */
@@ -114,7 +114,7 @@ const selectedOptions = computed(() =>
 const queryId = useId()
 const { data, status } = useQuery<TData[]>({
   queryKey: computed(() => ['ui-combobox', queryId, params]),
-  queryFn: () => (api ? api(params) : Promise.resolve([])),
+  queryFn: () => (api ? api(params as TParams) : Promise.resolve([])),
   staleTime: 0,
   gcTime: 0,
   refetchOnMount: 'always',
