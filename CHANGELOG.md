@@ -5,6 +5,7 @@
 ### 🚀 Features
 
 - feat: 新增`UiCardApp`组件
+- feat: 新增`UiDescription`系列组件
 - feat: `UiButton`新增`action`尺寸
 - feat: `UiCombobox`/`UiComboboxCascader`新增支持布尔型值，并统一了内部值格式
 - feat: `UiTree`远程数据获取时`refetchOnWindowFocus`设为`false`

@@ -64,6 +64,8 @@ declare module 'vue' {
     UiDataTableEllipsis: typeof import('./src/components/ui/data-table/DataTableEllipsis.vue')['default']
     UiDatePicker: typeof import('./src/components/ui/date-picker/DatePicker.vue')['default']
     UiDatePickerRange: typeof import('./src/components/ui/date-picker/DatePickerRange.vue')['default']
+    UiDescription: typeof import('./src/components/ui/description/Description.vue')['default']
+    UiDescriptionItem: typeof import('./src/components/ui/description/DescriptionItem.vue')['default']
     UiDialog: typeof import('./src/components/ui/dialog/Dialog.vue')['default']
     UiDialogApp: typeof import('./src/components/ui/dialog/DialogApp.vue')['default']
     UiDialogClose: typeof import('./src/components/ui/dialog/DialogClose.vue')['default']
