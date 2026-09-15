@@ -45,7 +45,7 @@ useProvideDescriptionState(normalizedOrientation, normalizedColumn, resolvedLabe
     v-bind="$attrs"
     data-slot="description"
     :data-orientation="orientation"
-    :class="cn('grid gap-x-10 gap-y-7', props.class)"
+    :class="cn('grid gap-6', props.class)"
     :style="gridStyle"
   >
     <slot />

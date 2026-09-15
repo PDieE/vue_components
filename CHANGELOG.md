@@ -16,6 +16,7 @@
 - feat: `UiSheetDescription`字体颜色改为`text-foreground-2`
 - feat: `UiStatistic`新增`size`参数用于控制整体尺寸，目前支持`default`和`sm`，默认为`default`
 - feat: `UiStatistic`新增`matchIconBg`参数用于控制是背景色否匹配图标背景颜色，默认为`false`
+- feat: `UiPageTop`新增`right`插槽
 
 ### 🐞 Bug Fixes
 
