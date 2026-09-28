@@ -14,7 +14,7 @@ const props = defineProps<{
     role="group"
     :class="
       cn(
-        'group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs outline-none',
+        'group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border outline-none',
         'transition-[color,border-color]',
         'h-8 min-w-0 has-[>textarea]:h-auto',
         'has-[[data-slot=input-group-control]:disabled]:bg-disabled',

@@ -9,30 +9,7 @@ defineOptions({
 })
 
 const modelValue = defineModel<number | string>()
-// const props = withDefaults(
-//   defineProps<{
-//     class?: HTMLAttributes['class'];
-//     /** 标题 */
-//     label?: string;
-//     /** 是否禁用 */
-//     disabled?: boolean;
-//     /** 是否只读 */
-//     readonly?: boolean;
-//     /** 最小值 */
-//     min?: number;
-//     /** 最大值 */
-//     max?: number;
-//     /** 单位 */
-//     unit?: string;
-//     /** 小数位数 */
-//     decimalPlaces?: number;
-//     /** 步长 */
-//     step?: number;
-//     /** 是否显示增减按钮 */
-//     controls?: boolean;
-//   }>(),
-//   { disabled: false, readonly: false, min: 0, max: Infinity, step: 1 },
-// );
+
 const {
   disabled = false,
   readonly = false,
@@ -83,7 +60,7 @@ const currentNum = computed(() => {
   if (Number.isNaN(num)) return 0
   return num
 })
-/** 更新modelValue和输入元素的值 */
+/** 更新外部 v-model 和原生输入框显示值。 */
 function setValue(v: number | string, el?: HTMLInputElement) {
   if (el) {
     el.value = v.toString()
@@ -129,7 +106,7 @@ function focus() {
   current.value = (parseNumber(modelValue.value) ?? '').toString()
 }
 const onComposition = shallowRef(false)
-/** 输入事件，处理输入的内容为正常的数字格式 */
+/** 输入时将内容归一化为数字格式。 */
 function input(e: InputEvent) {
   if (isInactive.value) return
   if (!e.target) return
@@ -208,7 +185,12 @@ function syncCurrentFromModelValue() {
     return
   }
 
-  current.value = fixDecimalPlaces(modelValue.value).toString()
+  const normalizedValue = removeOverDecimalPlaces(String(modelValue.value))
+  current.value = fixDecimalPlaces(normalizedValue).toString()
+
+  if (normalizedValue !== String(modelValue.value)) {
+    setValue(normalizedValue)
+  }
 }
 watch(
   [modelValue, () => decimalPlaces],

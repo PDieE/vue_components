@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TData extends object">
+<script setup lang="ts" generic="TData extends object, TParams = void">
 import { Icon } from '@iconify/vue'
 import { useQuery } from '@tanstack/vue-query'
 import { cloneDeep } from 'es-toolkit'
@@ -40,8 +40,8 @@ const {
   /** 选项 */
   options?: (ComboboxOption | TData)[]
   /** 数据获取方法 */
-  api?: (params?: unknown) => Promise<TData[]>
-  params?: unknown
+  api?: (params: TParams) => Promise<TData[]>
+  params?: TParams
   /** 字段别名 */
   keys?: { type?: string; value?: string; label?: string; disabled?: string }
   /** 占位符 */
@@ -114,7 +114,7 @@ const selectedOptions = computed(() =>
 const queryId = useId()
 const { data, status } = useQuery<TData[]>({
   queryKey: computed(() => ['ui-combobox', queryId, params]),
-  queryFn: () => (api ? api(params) : Promise.resolve([])),
+  queryFn: () => (api ? api(params as TParams) : Promise.resolve([])),
   staleTime: 0,
   gcTime: 0,
   refetchOnMount: 'always',
@@ -162,6 +162,15 @@ async function clearSelected() {
  */
 function isOptionSelected(value: ComboboxValue) {
   return multiple ? selectedValueList.value.includes(value) : modelValue.value === value
+}
+
+/**
+ * 生成选项的内部唯一值，避免将布尔值等不兼容类型直接传给 Reka UI 或 Vue key。
+ * @param value 选项值
+ * @param index 选项在列表中的索引
+ */
+function getOptionValue(value: ComboboxValue | undefined, index: number) {
+  return `${index}:${typeof value}:${String(value)}`
 }
 </script>
 
@@ -235,7 +244,10 @@ function isOptionSelected(value: ComboboxValue) {
           <div v-if="innerOptions.length === 0" class="py-6 text-center text-sm">暂无数据</div>
           <CommandEmpty v-else>无结果</CommandEmpty>
           <CommandGroup class="space-y-0.5">
-            <template v-for="option in innerOptions" :key="option.value">
+            <template
+              v-for="(option, index) in innerOptions"
+              :key="getOptionValue(option.value, index)"
+            >
               <CommandSeparator v-if="option.type === 'separator'" />
               <CommandItem
                 v-else-if="option.value !== undefined"
@@ -245,7 +257,7 @@ function isOptionSelected(value: ComboboxValue) {
                   !isOptionSelected(option.value) && 'hover:bg-hover',
                   isOptionSelected(option.value) && 'bg-brand-bg-hover! hover:bg-brand-bg-hover!',
                 ]"
-                :value="option.value"
+                :value="getOptionValue(option.value, index)"
                 @select="
                   () => {
                     select(option.value)

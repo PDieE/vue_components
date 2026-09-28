@@ -61,6 +61,7 @@ const { data, status, refetch } = useQuery<T[]>({
   staleTime: 0,
   gcTime: 0,
   refetchOnMount: 'always',
+  refetchOnWindowFocus: false,
 })
 watch(
   () => props.watch,

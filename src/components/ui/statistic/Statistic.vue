@@ -1,11 +1,34 @@
 <!-- 上传组件 -->
 <template>
-  <div class="p-6 rounded-2xl bg-layout">
-    <div class="flex items-center">
+  <div
+    :class="
+      cn(
+        'rounded-2xl bg-layout',
+        { default: 'p-6', sm: 'p-4' }[size],
+        matchIconBg &&
+          {
+            default: '',
+            blue: 'bg-blue',
+            success: 'bg-success',
+            warning: 'bg-warning',
+            purple: 'bg-purple',
+            error: 'bg-error',
+          }[iconBg ?? 'default'],
+      )
+    "
+  >
+    <div class="flex items-center gap-2">
       <div class="flex-1">
-        <div class="text-sm text-foreground-4 leading-5.5 mb-1 truncate">{{ title }}</div>
+        <div
+          :class="[
+            'text-foreground-4 leading-5.5 mb-1 truncate',
+            { default: 'text-sm', sm: 'text-xs' }[size],
+          ]"
+        >
+          {{ title }}
+        </div>
         <div class="text-2xl text-foreground font-bold truncate">
-          {{ valueText }}
+          <slot name="value">{{ valueText }}</slot>
           <span v-if="unit" class="text-sm font-normal">{{ unit }}</span>
         </div>
       </div>
@@ -16,13 +39,18 @@
             iconBg &&
               ['blue', 'success', 'purple', 'error', 'default', 'warning'].includes(iconBg) &&
               iconBgVariants({ iconBg: iconBg, iconBgGradient: iconBgGradient }),
-            'size-12 rounded-xl flex items-center justify-center',
+            'shrink-0 rounded-xl flex items-center justify-center',
+            { default: 'size-12', sm: 'size-10' }[size],
             iconBgClass,
           )
         "
       >
         <slot name="icon">
-          <Icon v-if="icon" :class="cn('size-6 text-white', iconClass)" :icon="icon" />
+          <Icon
+            v-if="icon"
+            :class="cn('text-white', { default: 'size-6', sm: 'size-5' }[size], iconClass)"
+            :icon="icon"
+          />
         </slot>
       </div>
     </div>
@@ -32,24 +60,27 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { VariantProps } from 'class-variance-authority'
-import { cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
 type PresetColor = 'blue' | 'success' | 'purple' | 'error' | 'default' | 'warning'
 export type IconBgVariants = VariantProps<typeof iconBgVariants>
 const {
+  size = 'default',
   title,
   subTitle,
   value,
   unit,
+  matchIconBg = false,
   icon,
   iconClass,
   iconBg,
   iconBgClass,
   iconBgGradient = false,
 } = defineProps<{
+  /** 尺寸 */
+  size?: 'default' | 'sm'
   /** 标题 */
   title: string
   /** 子标题 */
@@ -58,6 +89,8 @@ const {
   value?: number | string
   /** 单位 */
   unit?: string
+  /** 是否匹配图标背景颜色 */
+  matchIconBg?: boolean
   /** 图标名称 */
   icon?: string
   /** 图标类名 */
