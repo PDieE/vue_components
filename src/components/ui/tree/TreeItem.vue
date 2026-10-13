@@ -83,12 +83,12 @@ const badgeProps = computed<(BadgeProps & { str?: string }) | undefined>(() => {
       </slot>
 
       <div v-if="props.subLabel" class="flex-1">
+        <div class="truncate">{{ props.label }}</div>
         <div
           class="truncate text-xs text-foreground-3 group-data-selected/tree-item:text-brand group-data-selected/tree-item:hover:text-brand"
         >
           {{ props.subLabel }}
         </div>
-        <div class="truncate">{{ props.label }}</div>
       </div>
       <span v-else class="flex-1 truncate">{{ props.label }}</span>
 

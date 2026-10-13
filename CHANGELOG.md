@@ -1,6 +1,19 @@
+# 1.2.0
+
+# 2026-10-13
+
+### 🚀 Features
+
+- feat: [Components]`UiPopoverConfirm`组件新增`cancelText`和`confirmText`参数用于自定义对应按钮文本
+- feat: [Components]`UiTreeItem`的`subLabel`挪到`label`下方
+
+### 🐞 Bug Fixes
+
+### 🚧 Others
+
 # 1.1.0
 
-# 2026-08-25
+# 2026-09-28
 
 ### 🚀 Features
 
