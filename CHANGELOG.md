@@ -4,8 +4,10 @@
 
 ### 🚀 Features
 
+- feat: [Components]新增`UiImageViewer`组件
 - feat: [Components]`UiPopoverConfirm`组件新增`cancelText`和`confirmText`参数用于自定义对应按钮文本
 - feat: [Components]`UiTreeItem`的`subLabel`挪到`label`下方
+- feat: [Components]`UiUploadImage`的大图查看能力使用`UiImageViewer`替代
 
 ### 🐞 Bug Fixes
 

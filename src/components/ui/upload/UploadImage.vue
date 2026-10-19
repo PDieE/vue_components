@@ -1,174 +1,158 @@
 <!-- 图片上传组件 -->
 <template>
   <div
-    ref="containerRef"
     :class="
       cn('group ui-upload-image flex w-full flex-col gap-2', disabled && 'is-disabled', props.class)
     "
   >
-    <div class="flex flex-wrap items-center gap-2">
-      <!-- 点击上传触发元素 -->
-      <div
-        v-if="modelValue.length < count"
-        :class="
-          cn(
-            'flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] p-2 transition-colors',
-            !disabled && !readonly
-              ? 'cursor-pointer hover:border-brand'
-              : readonly
-                ? 'cursor-default'
-                : 'cursor-not-allowed opacity-60',
-            triggerClass,
-          )
-        "
-        :style="triggerStyle"
-        role="button"
-        :tabindex="!disabled && !readonly ? 0 : -1"
-        :aria-disabled="disabled || readonly ? 'true' : undefined"
-        @click="openFileDialog()"
-        @keydown.enter.prevent="openFileDialog()"
-        @keydown.space.prevent="openFileDialog()"
-      >
-        <Icon icon="icon-park-outline:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
-        <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
-      </div>
-
-      <!-- 已上传图片 -->
-      <div
-        v-for="(file, index) in modelValue"
-        :key="fileKey(file)"
-        :class="
-          cn(
-            'group/image relative shrink-0 overflow-hidden rounded-md',
-            !disabled && !readonly
-              ? 'cursor-pointer'
-              : readonly
-                ? 'cursor-default'
-                : 'cursor-not-allowed',
-          )
-        "
-        :style="imageStyle"
-        role="button"
-        :tabindex="!disabled && !readonly ? 0 : -1"
-        :aria-disabled="disabled || readonly ? 'true' : undefined"
-        @click="openFileDialog()"
-        @keydown.enter.prevent="openFileDialog()"
-        @keydown.space.prevent="openFileDialog()"
-      >
-        <!-- 图片预览 -->
-        <img
-          v-if="getPreviewUrl(file)"
-          :src="getPreviewUrl(file)"
-          :alt="file.name"
-          class="absolute inset-0 size-full rounded-[2px] object-cover"
-        />
-
-        <!-- 状态：上传中 - 始终显示进度遮罩 -->
+    <UiImageViewer v-slot="{ open }" :images="previewImages">
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- 点击上传触发元素 -->
         <div
-          v-if="file.status === 'progress'"
-          class="absolute inset-0 z-1 flex items-center justify-center rounded-md bg-black/60"
-        >
-          <svg
-            class="-rotate-90 text-brand"
-            :style="progressStyle"
-            viewBox="0 0 36 36"
-            role="progressbar"
-            :aria-valuenow="Math.round(file.percent || 0)"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            aria-hidden="true"
-          >
-            <circle cx="18" cy="18" r="14" stroke="#dbeafe" stroke-width="4" fill="none" />
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              stroke="currentColor"
-              stroke-width="4"
-              fill="none"
-              stroke-linecap="round"
-              :stroke-dasharray="progressCircumference"
-              :stroke-dashoffset="progressOffset(file)"
-            />
-          </svg>
-        </div>
-
-        <!-- 非上传中状态 - 悬浮显示操作按钮 -->
-        <div
-          v-else
+          v-if="modelValue.length < count"
           :class="
             cn(
-              'mask absolute inset-0 z-1 flex items-center justify-center gap-4 rounded-md bg-black/60 opacity-0 transition-opacity group-hover/image:opacity-100',
-              disabled && 'group-hover/image:opacity-0',
+              'flex shrink-0 flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] p-2 transition-colors',
+              !disabled && !readonly
+                ? 'cursor-pointer hover:border-brand'
+                : readonly
+                  ? 'cursor-default'
+                  : 'cursor-not-allowed opacity-60',
+              triggerClass,
             )
           "
+          :style="triggerStyle"
+          role="button"
+          :tabindex="!disabled && !readonly ? 0 : -1"
+          :aria-disabled="disabled || readonly ? 'true' : undefined"
+          @click="openFileDialog()"
+          @keydown.enter.prevent="openFileDialog()"
+          @keydown.space.prevent="openFileDialog()"
         >
-          <!-- 状态：成功 - 查看按钮 -->
-          <button
-            v-if="file.status === 'success'"
-            type="button"
-            class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
-            aria-label="查看图片"
-            @click.stop="handlePreview(index)"
-          >
-            <Icon icon="lucide:eye" class="size-4" />
-          </button>
+          <Icon icon="icon-park-outline:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
+          <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
+        </div>
 
-          <!-- 状态：等待/失败 - 上传按钮 -->
-          <button
-            v-else-if="
-              !readonly && (file.status === 'waiting' || file.status === 'fail') && showUploadButton
+        <!-- 已上传图片 -->
+        <div
+          v-for="(file, index) in modelValue"
+          :key="fileKey(file)"
+          :class="
+            cn(
+              'group/image relative shrink-0 overflow-hidden rounded-md',
+              !disabled && !readonly
+                ? 'cursor-pointer'
+                : readonly
+                  ? 'cursor-default'
+                  : 'cursor-not-allowed',
+            )
+          "
+          :style="imageStyle"
+          role="button"
+          :tabindex="!disabled && !readonly ? 0 : -1"
+          :aria-disabled="disabled || readonly ? 'true' : undefined"
+          @click="openFileDialog()"
+          @keydown.enter.prevent="openFileDialog()"
+          @keydown.space.prevent="openFileDialog()"
+        >
+          <!-- 图片预览 -->
+          <img
+            v-if="getPreviewUrl(file)"
+            :src="getPreviewUrl(file)"
+            :alt="file.name"
+            class="absolute inset-0 size-full rounded-[2px] object-cover"
+          />
+
+          <!-- 状态：上传中 - 始终显示进度遮罩 -->
+          <div
+            v-if="file.status === 'progress'"
+            class="absolute inset-0 z-1 flex items-center justify-center rounded-md bg-black/60"
+          >
+            <svg
+              class="-rotate-90 text-brand"
+              :style="progressStyle"
+              viewBox="0 0 36 36"
+              role="progressbar"
+              :aria-valuenow="Math.round(file.percent || 0)"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-hidden="true"
+            >
+              <circle cx="18" cy="18" r="14" stroke="#dbeafe" stroke-width="4" fill="none" />
+              <circle
+                cx="18"
+                cy="18"
+                r="14"
+                stroke="currentColor"
+                stroke-width="4"
+                fill="none"
+                stroke-linecap="round"
+                :stroke-dasharray="progressCircumference"
+                :stroke-dashoffset="progressOffset(file)"
+              />
+            </svg>
+          </div>
+
+          <!-- 非上传中状态 - 悬浮显示操作按钮 -->
+          <div
+            v-else
+            :class="
+              cn(
+                'mask absolute inset-0 z-1 flex items-center justify-center gap-4 rounded-md bg-black/60 opacity-0 transition-opacity group-hover/image:opacity-100',
+                disabled && 'group-hover/image:opacity-0',
+              )
             "
-            type="button"
-            class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
-            :disabled="disabled"
-            :aria-label="file.status === 'fail' ? '点击重试' : '上传图片'"
-            @click.stop="upload(file)"
           >
-            <Icon
-              :icon="
-                file.status === 'fail' ? 'icon-park-outline:refresh' : 'icon-park-outline:upload'
-              "
-              class="size-4"
-            />
-          </button>
+            <!-- 状态：成功 - 查看按钮 -->
+            <button
+              v-if="file.status === 'success'"
+              type="button"
+              class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
+              aria-label="查看图片"
+              @click.stop="open(index)"
+            >
+              <Icon icon="lucide:eye" class="size-4" />
+            </button>
 
-          <!-- 删除按钮（始终存在） -->
-          <button
-            v-if="!readonly"
-            type="button"
-            class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
-            :disabled="disabled"
-            aria-label="删除图片"
-            @click.stop="removeFile(file.id)"
-          >
-            <Icon icon="icon-park-outline:delete" class="size-4" />
-          </button>
+            <!-- 状态：等待/失败 - 上传按钮 -->
+            <button
+              v-else-if="
+                !readonly &&
+                (file.status === 'waiting' || file.status === 'fail') &&
+                showUploadButton
+              "
+              type="button"
+              class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
+              :disabled="disabled"
+              :aria-label="file.status === 'fail' ? '点击重试' : '上传图片'"
+              @click.stop="upload(file)"
+            >
+              <Icon
+                :icon="
+                  file.status === 'fail' ? 'icon-park-outline:refresh' : 'icon-park-outline:upload'
+                "
+                class="size-4"
+              />
+            </button>
+
+            <!-- 删除按钮（始终存在） -->
+            <button
+              v-if="!readonly"
+              type="button"
+              class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
+              :disabled="disabled"
+              aria-label="删除图片"
+              @click.stop="removeFile(file.id)"
+            >
+              <Icon icon="icon-park-outline:delete" class="size-4" />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </UiImageViewer>
 
     <!-- 提示信息 -->
     <p v-if="acceptTip" class="text-xs font-medium text-[#94a3b8]">{{ acceptTip }}</p>
-
-    <!-- 图片预览组（外层隐藏，仅用于承载预览功能） -->
-    <div class="hidden pointer-events-auto">
-      <a-image-preview-group
-        :preview="{
-          visible: previewVisible,
-          current: previewCurrent,
-          onVisibleChange: (visible: boolean) => (previewVisible = visible),
-          getContainer: () => containerRef,
-        }"
-      >
-        <a-image
-          v-for="file in modelValue"
-          :key="file.id"
-          :src="getPreviewUrl(file)"
-          :alt="file.name"
-        />
-      </a-image-preview-group>
-    </div>
 
     <!-- 文件选择框隐藏元素 -->
     <input
@@ -191,7 +175,7 @@ import { imageDimensionsFromData } from 'image-dimensions'
 import { nanoid } from 'nanoid'
 import prettyBytes from 'pretty-bytes'
 import type { HTMLAttributes } from 'vue'
-import { computed, onBeforeUnmount, ref, useTemplateRef } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import { cn } from '@/lib/utils'
@@ -276,12 +260,10 @@ const emit = defineEmits<{
   error: [message: string, file?: UploadFile | File]
 }>()
 
-const containerRef = useTemplateRef('containerRef')
 const inputRef = ref<HTMLInputElement>()
 const overCount = computed(() => fileMap.value.size >= count)
 
-const previewVisible = ref(false)
-const previewCurrent = ref(0)
+const previewImages = computed(() => modelValue.value.map((file) => getPreviewUrl(file) || ''))
 const itemWidth = computed(() => (Array.isArray(size) ? size[0] : size))
 const itemHeight = computed(() => (Array.isArray(size) ? size[1] : size))
 const triggerStyle = computed(() => ({
@@ -324,12 +306,6 @@ function openFileDialog() {
     return
   }
   inputRef.value?.click()
-}
-
-/** 打开图片预览 */
-function handlePreview(index: number) {
-  previewCurrent.value = index
-  previewVisible.value = true
 }
 
 /**

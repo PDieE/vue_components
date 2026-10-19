@@ -129,6 +129,7 @@ declare module 'vue' {
     UiHoverCardContent: typeof import('./src/components/ui/hover-card/HoverCardContent.vue')['default']
     UiHoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
     UiImage: typeof import('./src/components/ui/image/Image.vue')['default']
+    UiImageViewer: typeof import('./src/components/ui/image-viewer/ImageViewer.vue')['default']
     UiInput: typeof import('./src/components/ui/input/Input.vue')['default']
     UiInputApp: typeof import('./src/components/ui/input/InputApp.vue')['default']
     UiInputCompare: typeof import('./src/components/ui/input/InputCompare.vue')['default']
