@@ -167,7 +167,7 @@
           <template #icon>
             <Icon
               class="size-3 text-foreground-2 transition-all group-hover/button:text-destructive"
-              icon="icon-park-outline:delete"
+              icon="lucide:trash"
             />
           </template>
         </UiButton>

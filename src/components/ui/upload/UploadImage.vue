@@ -144,7 +144,7 @@
               aria-label="删除图片"
               @click.stop="removeFile(file.id)"
             >
-              <Icon icon="icon-park-outline:delete" class="size-4" />
+              <Icon icon="lucide:trash" class="size-4" />
             </button>
           </div>
         </div>

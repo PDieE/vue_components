@@ -5,9 +5,13 @@
 ### 🚀 Features
 
 - feat: [Components]新增`UiImageViewer`组件
+- feat: [Components]新增`UiSectionHeader`组件
 - feat: [Components]`UiPopoverConfirm`组件新增`cancelText`和`confirmText`参数用于自定义对应按钮文本
 - feat: [Components]`UiTreeItem`的`subLabel`挪到`label`下方
 - feat: [Components]`UiUploadImage`的大图查看能力使用`UiImageViewer`替代
+- feat: [Components]`UiCardHeader`、`UiTabs`样式微调
+- feat: [Components]`UiFilterFormMore`、`UiUploadDragger`、`UiUploadImage`的图标更换为`Lucide`图标集
+- feat: [Components]`UiStatistic`颜色重整；去除了`iconBgGradient`参数及相关功能；`iconBg`更名为`color`以符合实际意义
 
 ### 🐞 Bug Fixes
 

@@ -60,7 +60,7 @@ function search() {
         :theme="open || moreCount > 0 ? 'brand' : 'default'"
         :size="!moreCount ? 'icon' : undefined"
       >
-        <template #icon><Icon icon="custom:filter" /></template>
+        <template #icon><Icon icon="lucide:filter" /></template>
         <template v-if="moreCount">({{ moreCount }})</template>
       </UiButton>
     </UiPopoverTrigger>

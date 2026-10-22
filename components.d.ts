@@ -190,6 +190,7 @@ declare module 'vue' {
     UiRichEditorSelect: typeof import('./src/components/ui/rich-editor/RichEditorSelect.vue')['default']
     UiScrollArea: typeof import('./src/components/ui/scroll-area/ScrollArea.vue')['default']
     UiScrollAreaScrollBar: typeof import('./src/components/ui/scroll-area/ScrollBar.vue')['default']
+    UiSectionHeader: typeof import('./src/components/ui/section-header/SectionHeader.vue')['default']
     UiSectionTitle: typeof import('./src/components/ui/SectionTitle.vue')['default']
     UiSeparator: typeof import('./src/components/ui/separator/Separator.vue')['default']
     UiSheet: typeof import('./src/components/ui/sheet/Sheet.vue')['default']
