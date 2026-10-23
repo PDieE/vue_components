@@ -70,7 +70,7 @@ function compositionend(e: CompositionEvent) {
     />
 
     <!-- 最大长度提示 -->
-    <div v-if="props.maxlength" class="text-right text-foreground-2 text-sm mt-1">
+    <div v-if="props.maxlength" class="text-right text-xs text-foreground-3 mt-1">
       {{ modelValue?.toString().length ?? 0 }}/{{ props.maxlength }}
     </div>
   </div>

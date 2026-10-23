@@ -9,13 +9,16 @@
 - feat: [Components]`UiPopoverConfirm`组件新增`cancelText`和`confirmText`参数用于自定义对应按钮文本
 - feat: [Components]`UiTreeItem`的`subLabel`挪到`label`下方
 - feat: [Components]`UiUploadImage`的大图查看能力使用`UiImageViewer`替代
-- feat: [Components]`UiCardHeader`、`UiTabs`样式微调
+- feat: [Components]`UiCardHeader`、`UiTabs`、`UiCard`、`UiCardHeader`、`UiCardTitle`、`UiInputApp`、`UiPeekPanel`、`UiTextareaApp`样式微调
 - feat: [Components]`UiFilterFormMore`、`UiUploadDragger`、`UiUploadImage`的图标更换为`Lucide`图标集
 - feat: [Components]`UiStatistic`颜色重整；去除了`iconBgGradient`参数及相关功能；`iconBg`更名为`color`以符合实际意义
 
 ### 🐞 Bug Fixes
 
 ### 🚧 Others
+
+- chore: [Deps]引入`cn`(0.5.0)替代原本的`cn`
+- chore: [Deps]移除`clsx`、`tailwind-merge`，全部使用`cn`
 
 # 1.1.0
 
