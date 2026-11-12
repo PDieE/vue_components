@@ -212,6 +212,7 @@ declare global {
   const useOffsetPagination: typeof import('@vueuse/core').useOffsetPagination
   const useOnline: typeof import('@vueuse/core').useOnline
   const usePageLeave: typeof import('@vueuse/core').usePageLeave
+  const usePaginationData: typeof import('./src/composables/usePaginationData').usePaginationData
   const useParallax: typeof import('@vueuse/core').useParallax
   const useParentElement: typeof import('@vueuse/core').useParentElement
   const usePerformanceObserver: typeof import('@vueuse/core').usePerformanceObserver
@@ -303,6 +304,9 @@ declare global {
   // @ts-ignore
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { PaginationParamsFields, PaginationDataFields, PaginationParams, PaginationData } from './src/composables/usePaginationData'
+  import('./src/composables/usePaginationData')
   // @ts-ignore
   export type { UseVeeFormOptions } from './src/composables/useVeeForm'
   import('./src/composables/useVeeForm')

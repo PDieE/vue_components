@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
 import { Eye, EyeOff } from '@lucide/vue'
 import { cloneDeep, omit } from 'es-toolkit'
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
@@ -13,6 +14,7 @@ const {
   type = 'text',
   disabled = false,
   autofocus = false,
+  search = false,
   ...props
 } = defineProps<{
   class?: HTMLAttributes['class']
@@ -23,6 +25,8 @@ const {
   maxlength?: number
   /** 是否自动获得焦点 */
   autofocus?: boolean
+  /** 是否显示搜索图标 */
+  search?: boolean
 }>()
 const emits = defineEmits<{
   /** 值改变时触发 */
@@ -120,8 +124,12 @@ function togglePasswordVisible() {
       @blur="emits('blur', $event)"
     />
 
+    <UiInputGroupAddon v-if="search" align="inline-start">
+      <Icon class="size-4 text-foreground-3" icon="lucide:search" />
+    </UiInputGroupAddon>
+
     <!-- 最大长度提示 -->
-    <UiInputGroupAddon v-if="maxlength" align="inline-end">
+    <UiInputGroupAddon v-if="maxlength" class="text-xs text-foreground-3" align="inline-end">
       {{ modelValue?.toString().length ?? 0 }}/{{ props.maxlength }}
     </UiInputGroupAddon>
 

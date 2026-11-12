@@ -15,7 +15,7 @@ const { class: pClass, shadow = false } = defineProps<{
     data-slot="card"
     :class="
       cn(
-        'bg-card text-card-foreground flex flex-col gap-6 rounded-2xl border py-5',
+        'bg-card text-card-foreground flex flex-col gap-4 rounded-2xl border py-5',
         shadow ? 'shadow-sm' : '',
         pClass,
       )

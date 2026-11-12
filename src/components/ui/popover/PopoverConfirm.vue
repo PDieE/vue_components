@@ -19,8 +19,12 @@ const props = withDefaults(
       theme?: 'default' | 'warning' | 'destructive'
       /** 取消按钮 */
       cancelBtn?: ButtonProps
+      /** 取消按钮文案 */
+      cancelText?: string
       /** 确认按钮 */
       confirmBtn?: ButtonProps
+      /** 确认按钮文案 */
+      confirmText?: string
       /** 层级索引 */
       zIndex?: number
       class?: HTMLAttributes['class']
@@ -43,7 +47,9 @@ const delegatedProps = reactiveOmit(
   'content',
   'theme',
   'cancelBtn',
+  'cancelText',
   'confirmBtn',
+  'confirmText',
   'class',
 )
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
@@ -100,10 +106,10 @@ function confirm() {
       </div>
       <div class="text-right space-x-2">
         <UiButton v-bind="{ variant: 'outline', size: 'xs', ...cancelBtn }" @click="cancel">
-          取消
+          {{ cancelText ?? '取消' }}
         </UiButton>
         <UiButton v-bind="{ theme: 'brand', size: 'xs', ...confirmBtn }" @click="confirm">
-          确认
+          {{ confirmText ?? '确认' }}
         </UiButton>
       </div>
     </UiPopoverContent>
