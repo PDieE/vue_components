@@ -1,0 +1,7 @@
+interface:
+  display_name: "列表页面模板"
+  short_description: "复用项目已有 Ui 组件与钩子实现列表页，按需组合筛选、分页和行操作"
+  default_prompt: "使用 $list-page 复用已有 Ui 系列组件和对应钩子实现当前列表页面，按业务需求选择可选模块。"
+
+policy:
+  allow_implicit_invocation: true

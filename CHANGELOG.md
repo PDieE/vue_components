@@ -1,6 +1,6 @@
 # 1.2.0
 
-# 2026-10-13
+# 2026-11-12
 
 ### 🚀 Features
 
@@ -12,6 +12,7 @@
 - feat: [Components]`UiCardHeader`、`UiTabs`、`UiCard`、`UiCardHeader`、`UiCardTitle`、`UiInputApp`、`UiPeekPanel`、`UiTextareaApp`样式微调
 - feat: [Components]`UiFilterFormMore`、`UiUploadDragger`、`UiUploadImage`的图标更换为`Lucide`图标集
 - feat: [Components]`UiStatistic`颜色重整；去除了`iconBgGradient`参数及相关功能；`iconBg`更名为`color`以符合实际意义
+- feat: [Skills]新增 `detail-page` `detail-page` `list-page` `typescript-comment-normalizer` 四个Skill
 
 ### 🐞 Bug Fixes
 

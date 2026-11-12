@@ -1,0 +1,3 @@
+interface:
+  display_name: "TypeScript 注释规范化"
+  short_description: "规范 TypeScript 模型注释与字段声明"
