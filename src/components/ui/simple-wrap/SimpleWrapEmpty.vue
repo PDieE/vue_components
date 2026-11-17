@@ -12,12 +12,6 @@
 import type { EmptyAppProps } from '../empty'
 
 const { description = '暂无数据', ...props } = defineProps<EmptyAppProps>()
-
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 </script>
 
 <style lang="less" scoped></style>

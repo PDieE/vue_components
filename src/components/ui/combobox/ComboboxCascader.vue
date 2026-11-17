@@ -49,11 +49,6 @@ const emits = defineEmits<{
   change: [value: ComboboxValue | undefined, option: TData | undefined, path: TData[]]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 /** 下拉面板是否打开 */
 const open = shallowRef(false)
 /** 规范化后的选项列表，统一字段名后供组件内部使用 */

@@ -83,11 +83,6 @@ const emits = defineEmits<{
   retry: []
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const showContent = computed(() => !loading && !error && !empty)
 const errorOpts = computed(() => {
   const opts: EmptyAppProps = {}

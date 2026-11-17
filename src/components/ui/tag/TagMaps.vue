@@ -2,7 +2,7 @@
 import { cloneDeep } from 'es-toolkit'
 import { computed, nextTick, ref, watchEffect } from 'vue'
 
-import type { TagProps, MapOption, MapOptionValue } from '.'
+import type { TagProps, MapOptionValue } from '.'
 
 const {
   values,
@@ -39,11 +39,6 @@ watchEffect(async () => {
     optionList.value = cloneDeep([...options, ...res])
   })
 })
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const optionList = ref<MapOption[]>([])
 const vals = computed(() => {
   if (!values) return []

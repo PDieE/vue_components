@@ -54,11 +54,6 @@ const { tip = undefined, options } = defineProps<{
   options: RichEditorSelectOption[]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const active = computed(() => {
   return options.find((item) => item.active)
 })

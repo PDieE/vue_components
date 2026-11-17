@@ -66,11 +66,6 @@ onBeforeMount(() => {
   doUpload()
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const bridgeStore = useBridgeStore()
 const {
   sizeLimit = Infinity,

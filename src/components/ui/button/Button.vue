@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   loading: false,
   disabled: false,
   block: false,
+  wide: false,
 })
 </script>
 
@@ -22,7 +23,14 @@ const props = withDefaults(defineProps<ButtonProps>(), {
     :data-size="size"
     :as="as"
     :as-child="asChild"
-    :class="cn(buttonVariants({ variant, size, theme }), props.block && 'flex w-full', props.class)"
+    :class="
+      cn(
+        buttonVariants({ variant, size, theme }),
+        props.block && 'flex w-full',
+        props.wide && 'min-w-20',
+        props.class,
+      )
+    "
     :disabled="props.disabled || props.loading ? true : undefined"
   >
     <UiSpinner v-if="props.loading" />

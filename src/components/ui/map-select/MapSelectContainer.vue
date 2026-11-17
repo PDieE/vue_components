@@ -69,11 +69,6 @@ onBeforeUnmount(() => {
   amapManager.destroy()
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const containerId = uniqueId('map-container-')
 const searchValue = ref('')
 

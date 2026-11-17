@@ -80,11 +80,6 @@ const emits = defineEmits<{
   close: []
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const contentWidth = computed(() => {
   if (!size) return '384px'
 

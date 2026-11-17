@@ -1,24 +1,13 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-
+import { IconBox, iconBoxColorVariants, type IconBoxColor } from '@/components/ui/icon-box'
 import { cn } from '@/lib/utils'
-
-/** 预制色 */
-type PresetColor =
-  | 'default'
-  | 'blue'
-  | 'success'
-  | 'cyan'
-  | 'indigo'
-  | 'warning'
-  | 'purple'
-  | 'error'
 
 const {
   size = 'default',
   title,
   subTitle,
   value,
+  loading = false,
   unit,
   matchIconBg = false,
   icon,
@@ -29,11 +18,13 @@ const {
   /** 尺寸 */
   size?: 'default' | 'sm'
   /** 标题 */
-  title: string
+  title?: string
   /** 子标题 */
   subTitle?: string
   /** 数值 */
   value?: number | string
+  /** 是否显示数值加载状态 */
+  loading?: boolean
   /** 单位 */
   unit?: string
   /** 是否匹配图标背景颜色 */
@@ -43,16 +34,11 @@ const {
   /** 图标类名 */
   iconClass?: string
   /** 图标与背景的配色 */
-  color?: PresetColor
+  color?: IconBoxColor
   /** 图标背景颜色类名 */
   iconBgClass?: string
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 /** 数值文本 */
 const valueText = computed(() => {
   // 千分位
@@ -62,19 +48,8 @@ const valueText = computed(() => {
   if (!value) return '-'
   return String(value)
 })
-/** Figma 配色：背景与图标颜色成对切换，仅用于本组件。 */
-const colorVariants = {
-  default: { background: 'bg-layout', foreground: 'text-foreground-3' },
-  success: { background: 'bg-[#ECFDF5]', foreground: 'text-[#16A34A]' },
-  blue: { background: 'bg-[#EFF6FF]', foreground: 'text-[#2563EB]' },
-  cyan: { background: 'bg-[rgba(224,255,248,0.75)]', foreground: 'text-[#0AA5A8]' },
-  indigo: { background: 'bg-[#EEF2FF]', foreground: 'text-[#4F46E5]' },
-  warning: { background: 'bg-[#FFFBEB]', foreground: 'text-[#D97706]' },
-  purple: { background: 'bg-[#F7EFFF]', foreground: 'text-[#9333EA]' },
-  error: { background: 'bg-[#FEF2F2]', foreground: 'text-[#DC2626]' },
-} satisfies Record<PresetColor, { background: string; foreground: string }>
-
-const colorClasses = computed(() => colorVariants[color])
+/** 当前配色 */
+const colorClasses = computed(() => iconBoxColorVariants[color])
 </script>
 
 <template>
@@ -95,33 +70,28 @@ const colorClasses = computed(() => colorVariants[color])
             { default: 'text-sm', sm: 'text-xs' }[size],
           ]"
         >
-          {{ title }}
+          <slot name="title">{{ title }}</slot>
         </div>
-        <div class="text-2xl text-foreground font-bold truncate">
-          <slot name="value">{{ valueText }}</slot>
-          <span v-if="unit" class="text-sm font-normal">{{ unit }}</span>
+        <div class="text-2xl text-foreground font-bold truncate" :aria-busy="loading">
+          <UiSpinner v-if="loading" class="inline-block align-middle" />
+          <template v-else>
+            <slot name="value">{{ valueText }}</slot>
+            <span v-if="unit" class="text-sm font-normal ml-0.5">{{ unit }}</span>
+          </template>
         </div>
       </div>
-      <div
+      <IconBox
         v-if="icon || $slots.icon"
-        :class="
-          cn(
-            colorClasses.background,
-            colorClasses.foreground,
-            'shrink-0 rounded-xl flex items-center justify-center',
-            { default: 'size-12', sm: 'size-10' }[size],
-            iconBgClass,
-          )
-        "
+        :icon="icon"
+        :size="size"
+        :color="color"
+        :icon-class="iconClass"
+        :icon-bg-class="iconBgClass"
       >
-        <slot name="icon">
-          <Icon
-            v-if="icon"
-            :class="cn({ default: 'size-6', sm: 'size-5' }[size], iconClass)"
-            :icon="icon"
-          />
-        </slot>
-      </div>
+        <template v-if="$slots.icon" #default>
+          <slot name="icon" />
+        </template>
+      </IconBox>
     </div>
     <div v-if="subTitle" class="text-xs text-foreground-2 leading-5 mt-2.5">{{ subTitle }}</div>
   </div>

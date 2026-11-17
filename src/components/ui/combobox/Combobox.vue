@@ -72,11 +72,6 @@ const emits = defineEmits<{
   change: [value: ComboboxModelValue, option: ComboboxChangeOption]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const open = shallowRef(false)
 const innerOptions = computed(() => {
   const { type = 'type', value = 'value', label = 'label', disabled = 'disabled' } = keys || {}

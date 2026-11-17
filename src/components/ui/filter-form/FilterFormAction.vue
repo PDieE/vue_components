@@ -13,11 +13,6 @@ onBeforeUnmount(() => {
   registerAction(false)
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const { registerAction } = useInjectFilterForm()!
 const compact = useMediaQuery(mediaQuery)
 </script>

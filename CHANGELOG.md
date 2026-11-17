@@ -1,4 +1,30 @@
-# 1.2.0
+# 2026-11-13
+
+### 🚀 Features
+
+- feat: [Components]新增`UiAlertDialogApp`
+- feat: [Components]新增`UiIconBox`
+- feat: [Components]`UiButton`新增`wide`参数，当为`true`时，应用最小宽度 min-w-20
+- feat: [Components]`UiDataTable`声明步骤优化
+- feat: [Components]`UiFieldDescription`样式统一
+- feat: [Components]`UiFilterFormContent`支持超出换行
+- feat: [Components]`UiFormItem`新增`description`参数，用于展示描述信息，支持插槽
+- feat: [Components]`UiInputApp`内图标统一使用`@lucide/vue`
+- feat: [Components]`UiPopoverConfirm`内的`content`支持插槽
+- feat: [Components]`UiStatistic`内的图标展示改用`UiIconBox`；增加`loading`参数用于控制加载状态；`title`参数支持不传
+- feat: [Components]`UiTagMap`/`UiTagMaps`所使用的`MapOption`类型迁移至`types.d.ts`；增加了公用的`getMapOption`工具方法
+- feat: [Components]`UiUploadImage`支持按照`imageSize` `imageRatio`展示提示
+- feat: [Components]移除`UiSectionTitle`
+- feat: [Skills]新增 `detail-page` `detail-page` `list-page` `typescript-comment-normalizer` 四个Skill
+
+### 🐞 Bug Fixes
+
+- feat: [Components]`UiUploadDragger`内的svg图标导入修复
+
+### 🚧 Others
+
+- chore: [Deps]引入`cn`(0.5.0)替代原本的`cn`
+- chore: [Deps]移除`clsx`、`tailwind-merge`，全部使用`cn`
 
 # 2026-11-12
 
@@ -20,8 +46,6 @@
 
 - chore: [Deps]引入`cn`(0.5.0)替代原本的`cn`
 - chore: [Deps]移除`clsx`、`tailwind-merge`，全部使用`cn`
-
-# 1.1.0
 
 # 2026-09-28
 
@@ -53,8 +77,6 @@
 
 - chore: `MapOptionValue`和`MapOption`新增布尔型
 - chore: 统一去除类输入框录入组件的阴影
-
-# 1.0.0
 
 # 2026-08-31
 

@@ -27,11 +27,6 @@ onBeforeMount(() => {
   }
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const onComposition = shallowRef(false)
 /** 输入事件，处理输入的内容为正常的数字格式 */
 function input(e: InputEvent) {

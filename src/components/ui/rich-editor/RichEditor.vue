@@ -206,11 +206,6 @@ onBeforeUnmount(() => {
   editor.value?.destroy()
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const id = shallowRef(uniqueId('editor_'))
 useProvideBridgeStore({ imageUpload, editorId: id.value })
 /** 内容主题样式 */

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { Eye, EyeOff } from '@lucide/vue'
+import { Eye, EyeOff, Search } from '@lucide/vue'
 import { cloneDeep, omit } from 'es-toolkit'
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
@@ -125,7 +124,7 @@ function togglePasswordVisible() {
     />
 
     <UiInputGroupAddon v-if="search" align="inline-start">
-      <Icon class="size-4 text-foreground-3" icon="lucide:search" />
+      <Search class="size-4 text-foreground-3" />
     </UiInputGroupAddon>
 
     <!-- 最大长度提示 -->

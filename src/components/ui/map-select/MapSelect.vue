@@ -36,13 +36,11 @@
     </div>
     <template v-if="!readonly" #footer>
       <UiDialogClose as-child>
-        <UiButton class="min-w-20" variant="outline">
+        <UiButton wide variant="outline">
           {{ readonly ? '关闭' : '取消' }}
         </UiButton>
       </UiDialogClose>
-      <UiButton class="min-w-20" theme="brand" :loading="finishLoading" @click="onFinish">
-        确定
-      </UiButton>
+      <UiButton wide theme="brand" :loading="finishLoading" @click="onFinish">确定</UiButton>
     </template>
   </UiDialogApp>
 </template>
@@ -73,11 +71,6 @@ const emits = defineEmits<{
   change: [value: MapSelectValue]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const aMapContainerRef = useTemplateRef('aMapContainerRef')
 const finishLoading = ref<boolean>(false)
 

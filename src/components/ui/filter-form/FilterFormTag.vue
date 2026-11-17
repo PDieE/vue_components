@@ -29,11 +29,6 @@ const emits = defineEmits<{
   clear: []
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const str = computed(() => {
   if (!data) return ''
 

@@ -58,11 +58,6 @@ const emits = defineEmits<{
   confirm: [color?: string]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 /** 选择框popup是否显示 */
 const innerColor = shallowRef<string>('#000000')
 /** 确认颜色 */

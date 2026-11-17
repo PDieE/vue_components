@@ -13,11 +13,6 @@ const { variant, icon, title, description } = defineProps<{
   description?: string
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const iconName = computed(() => {
   if (icon) return icon
   const icons: Record<string, string> = {

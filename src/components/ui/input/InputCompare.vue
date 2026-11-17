@@ -29,11 +29,6 @@ if (!modelValue.value || (!modelValue.value.value && modelValue.value.compare ==
   modelValue.value = props.defaultValue || { compare: '>', value: '' }
 }
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const groupRef = useTemplateRef('groupRef')
 /** 伪装原生change事件 */
 function dispatchChange() {

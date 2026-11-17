@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
+import { Icon } from '@iconify/vue'
 
 const { title, icon } = defineProps<{
   /** 标题 */
-  title: string;
+  title: string
   /** 图标名称，可通过 icon 插槽覆盖 */
-  icon?: string;
-}>();
+  icon?: string
+}>()
 </script>
 
 <template>

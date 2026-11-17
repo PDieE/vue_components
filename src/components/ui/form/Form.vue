@@ -16,12 +16,6 @@ const { custom = false } = defineProps<{
   /** 是否自定义样式 */
   custom?: boolean
 }>()
-
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 </script>
 
 <style lang="less" scoped></style>

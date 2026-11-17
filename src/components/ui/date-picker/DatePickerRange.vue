@@ -45,11 +45,6 @@ const emits = defineEmits<{
   change: [v?: [string, string]]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const innerValue = ref<DateRange>()
 function formatModelValue(v: DateValue) {
   const date = dayjs(v.toDate(getLocalTimeZone()))

@@ -29,7 +29,7 @@
           @keydown.enter.prevent="openFileDialog()"
           @keydown.space.prevent="openFileDialog()"
         >
-          <Icon icon="icon-park-outline:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
+          <Icon icon="lucide:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
           <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
         </div>
 
@@ -283,20 +283,26 @@ const acceptTip = computed(() => {
     .split(',')
     .map((item) => item.trim().replace(/^\./, ''))
     .filter(Boolean)
-  const limit =
-    sizeLimit === Infinity
-      ? ''
-      : `，不超过${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`
-  // accept 默认为 image/* 时，显示"支持任意图片格式"
   const onlyType = types[0]
-  if (types.length === 1 && (onlyType === 'image/*' || onlyType === '*/*')) {
-    return `支持任意图片格式${limit}`
+  const anyImageType =
+    types.length === 1 &&
+    (onlyType === '*/*' || (onlyType?.startsWith('image/') && onlyType.endsWith('/*')))
+  const formatted = types.map((item) => item.toUpperCase()).join('，')
+  const tips = [anyImageType ? '支持任意图片格式' : `支持${formatted}`]
+  if (sizeLimit !== Infinity) {
+    tips.push(`文件大小不超过${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`)
   }
-  if (types.length === 1 && onlyType?.startsWith('image/') && onlyType.endsWith('/*')) {
-    return `支持任意图片格式${limit}`
+  const { min, max } = imageSize.value ?? {}
+  if (min) {
+    tips.push(`图片尺寸不小于 ${min.width}×${min.height}px`)
   }
-  const formatted = types.map((item) => item.replace(/^\./, '').toUpperCase()).join('，')
-  return `支持${formatted}${limit}`
+  if (max) {
+    tips.push(`图片尺寸不大于 ${max.width}×${max.height}px`)
+  }
+  if (imageRatio) {
+    tips.push(`图片比例 ${imageRatio[0]}:${imageRatio[1]}`)
+  }
+  return tips.join('；')
 })
 const progressCircumference = 2 * Math.PI * 14
 

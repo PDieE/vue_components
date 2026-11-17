@@ -89,6 +89,16 @@ const rowSelectOpts = computed<Required<DataTableColumnMetaSelectOptions<TData>>
 })
 /** 是否启用树形能力；未传 tree 时仍按普通表格渲染。 */
 const treeEnabled = computed(() => Boolean(props.tree))
+// 选中行的 immediate watch 会读取树形行模型，相关状态必须提前初始化。
+/** 树配置默认值，外部仅需传入要覆盖的字段。 */
+const treeOpts = computed<DataTableTreeOptions<TData>>(() => ({
+  childrenKey: 'children',
+  defaultExpandAll: false,
+  expandTreeNodeOnClick: false,
+  indent: 24,
+  treeNodeColumnIndex: 0,
+  ...props.tree,
+}))
 /**
  * TanStack Table 实例。
  * 当前启用 core row model、row selection、固定列和基于 meta.visible 的初始显隐。
@@ -462,16 +472,6 @@ watch([visibleColumns, () => props.data], syncScrollBoundary, {
  */
 /** TanStack expanded 状态；true 表示全部展开，Record 表示按 row id 控制展开。 */
 const expanded = ref<ExpandedState>({})
-/** 树配置默认值，外部仅需传入要覆盖的字段。 */
-const treeOpts = computed<DataTableTreeOptions<TData>>(() => ({
-  childrenKey: 'children',
-  defaultExpandAll: false,
-  expandTreeNodeOnClick: false,
-  indent: 24,
-  treeNodeColumnIndex: 0,
-  ...props.tree,
-}))
-
 /** 接收 TanStack 的展开状态更新，并同步到本地 expanded。 */
 function updateExpanded(updaterOrValue: Updater<ExpandedState>) {
   valueUpdater(updaterOrValue, expanded)

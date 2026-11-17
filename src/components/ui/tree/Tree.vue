@@ -49,11 +49,6 @@ const emits = defineEmits<{
   change: [v: M extends true ? U[] : U]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const queryId = useId()
 const { data, status, refetch } = useQuery<T[]>({
   queryKey: ['ui-tree', queryId],

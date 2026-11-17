@@ -80,11 +80,6 @@ const emits = defineEmits<{
   change: [v?: string]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const innerValue = ref<DateValue>()
 const timeValue = ref<WheelPickerValue[]>(['00', '00', '00'])
 const timePickerFormat = computed(() =>

@@ -25,11 +25,6 @@ const props = defineProps<
   }
 >()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const badgeProps = computed<(BadgeProps & { str?: string }) | undefined>(() => {
   if (!props.badge) return undefined
 

@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { useInjectFilterForm } from './context'
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const { moreCount } = useInjectFilterForm()!
 </script>
 

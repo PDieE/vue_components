@@ -21,11 +21,6 @@ const {
   height?: number
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const { id, peek } = useInjectPeekPanel()!
 const target = computed(() => (peek.value ? `#peek-hover-${id}` : `#peek-card-${id}`))
 </script>

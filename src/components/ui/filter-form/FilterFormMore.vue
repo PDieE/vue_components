@@ -25,12 +25,6 @@ onBeforeUnmount(() => {
   registerMore(false)
 })
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
-
 const { filterForm, registerMore, moreCount } = useInjectFilterForm()!
 const form = ref<TMoreForm>(pick(filterForm.value as TForm, fields))
 const defaultForm = cloneDeep(form.value)

@@ -12,11 +12,6 @@ const { title = '', width = 220 } = defineProps<{
   width?: number
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const { id, peek } = useInjectPeekPanel()!
 const open = shallowRef(false)
 watchEffect(() => {

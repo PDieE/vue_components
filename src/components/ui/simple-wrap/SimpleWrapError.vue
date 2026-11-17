@@ -31,12 +31,6 @@ const emits = defineEmits<{
   /** 重试 */
   retry: []
 }>()
-
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 </script>
 
 <style lang="less" scoped></style>

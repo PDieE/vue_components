@@ -14,11 +14,6 @@ const {
   threshold?: number
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const progress = computed(() => {
   if (total <= 0) return 0
   return (Math.min(Math.max(current, 0), total) / total) * 100

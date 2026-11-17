@@ -1,8 +1,20 @@
 <template>
   <VeeField v-slot="scope" :name="name">
     <UiField :class="props.class">
-      <UiFieldLabel v-if="$slots.label" :required="required"><slot name="label" /></UiFieldLabel>
-      <UiFieldLabel v-else-if="label" :required="required">{{ label }}</UiFieldLabel>
+      <div
+        v-if="$slots.label || label || $slots.description || description || $slots.action"
+        class="flex items-center justify-between gap-3"
+      >
+        <UiFieldContent v-if="$slots.label || label || $slots.description || description">
+          <UiFieldLabel v-if="$slots.label || label" :required="required">
+            <slot name="label">{{ label }}</slot>
+          </UiFieldLabel>
+          <UiFieldDescription v-if="$slots.description || description">
+            <slot name="description">{{ description }}</slot>
+          </UiFieldDescription>
+        </UiFieldContent>
+        <slot name="action" />
+      </div>
       <slot v-bind="scope" />
       <UiFieldError :errors="scope.errors" />
     </UiField>
@@ -16,6 +28,7 @@ import type { HTMLAttributes } from 'vue'
 const {
   name,
   label,
+  description,
   required = false,
   ...props
 } = defineProps<{
@@ -24,15 +37,11 @@ const {
   name: string
   /** 标题 */
   label?: string
+  /** 标题下方的说明 */
+  description?: string
   /** 是否必填 */
   required?: boolean
 }>()
-
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 </script>
 
 <style lang="less" scoped></style>

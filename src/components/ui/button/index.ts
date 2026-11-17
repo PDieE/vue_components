@@ -162,4 +162,6 @@ export interface ButtonProps extends PrimitiveProps {
   disabled?: boolean
   /** 块级按钮 */
   block?: boolean
+  /** 应用最小宽度 min-w-20 */
+  wide?: boolean
 }

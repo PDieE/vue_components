@@ -46,11 +46,6 @@ const emits = defineEmits<{
   change: [v?: number | string]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 const current = ref<string>()
 const isInactive = computed(() => disabled || readonly)
 const currentNum = computed(() => {

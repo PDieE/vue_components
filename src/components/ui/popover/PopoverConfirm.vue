@@ -99,8 +99,8 @@ function confirm() {
           <div v-if="title" class="text-sm text-foreground">
             {{ title }}
           </div>
-          <div v-if="content" class="mt-1 text-sm text-muted-foreground">
-            {{ content }}
+          <div v-if="content || $slots.content" class="mt-1 text-sm text-muted-foreground">
+            <slot name="content">{{ content }}</slot>
           </div>
         </div>
       </div>

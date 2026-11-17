@@ -15,11 +15,6 @@ const props = defineProps<{
   images: string[]
 }>()
 
-/**
- * ====================
- *       基本逻辑
- * ====================
- */
 let viewer: PhotoSwipe | undefined
 let requestId = 0
 let isUnmounted = false
