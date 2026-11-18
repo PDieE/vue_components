@@ -11,6 +11,7 @@
     "
   >
     <div
+      v-if="showDraggerAfterSelect || !modelValue.length"
       :class="
         cn(
           'flex w-full items-center justify-center gap-4 rounded-md border border-dashed border-[#e4e9f1] bg-[#f8fafc] px-4 py-8 transition-colors',
@@ -235,6 +236,7 @@ const {
   autoUpload = true,
   showUploadButton = true,
   showFileList = true,
+  showDraggerAfterSelect = true,
   uploadDir = '',
   ...props
 } = defineProps<{
@@ -263,6 +265,8 @@ const {
   showUploadButton?: boolean
   /** 是否显示文件列表 */
   showFileList?: boolean
+  /** 选取文件后是否继续显示拖拽区域，清空文件后会重新显示 */
+  showDraggerAfterSelect?: boolean
   /** OSS pre-upload objectName directory, e.g. /ota */
   uploadDir?: string
 }>()

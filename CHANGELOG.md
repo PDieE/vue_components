@@ -1,3 +1,19 @@
+# 2026-11-18
+
+### 🚀 Features
+
+- feat: [Components]`UiCombobox`新增`footer`插槽
+- feat: [Components]`UiDescription`间隔缩小
+- feat: [Components]`UiImageViewer`新增视频支持
+- feat: [Components]`UiUploadDragger`新增`showDraggerAfterSelect`参数用于控制是否在选择文件后显示拖拽区域
+- feat: [Components]`UiUploadImage`新增视频支持；当count为1时可以点击重新上传
+
+### 🐞 Bug Fixes
+
+### 🚧 Others
+
+- chore: [Deps]引入`photoswipe-video-plugin`(1.0.2)用于视频预览支持
+
 # 2026-11-13
 
 ### 🚀 Features

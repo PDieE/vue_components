@@ -83,6 +83,9 @@ importers:
       photoswipe:
         specifier: ^5.4.4
         version: 5.4.4
+      photoswipe-video-plugin:
+        specifier: ^1.0.2
+        version: 1.0.2
       pretty-bytes:
         specifier: ^7.2.0
         version: 7.2.0
@@ -2760,6 +2763,9 @@ packages:
 
   perfect-debounce@2.1.0:
     resolution: {integrity: sha512-LjgdTytVFXeUgtHZr9WYViYSM/g8MkcTPYDlPa3cDqMirHjKiSZPYd6DoL7pK8AJQr+uWkQvCjHNdiMqsrJs+g==}
+
+  photoswipe-video-plugin@1.0.2:
+    resolution: {integrity: sha512-skNHaalLU7rptZ3zq4XfS5hPqSDD65ctvpf2X8buvC8BpOt6XKSIgRkLzTwgQOUm9yQ8kQ4mMget7CIqGcqtDg==}
 
   photoswipe@5.4.4:
     resolution: {integrity: sha512-WNFHoKrkZNnvFFhbHL93WDkW3ifwVOXSW3w1UuZZelSmgXpIGiZSNlZJq37rR8YejqME2rHs9EhH9ZvlvFH2NA==}
@@ -5778,6 +5784,8 @@ snapshots:
   perfect-debounce@1.0.0: {}
 
   perfect-debounce@2.1.0: {}
+
+  photoswipe-video-plugin@1.0.2: {}
 
   photoswipe@5.4.4: {}
 

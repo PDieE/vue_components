@@ -1,4 +1,4 @@
-<!-- 图片上传组件 -->
+<!-- 图片/视频上传组件 -->
 <template>
   <div
     :class="
@@ -33,7 +33,7 @@
           <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
         </div>
 
-        <!-- 已上传图片 -->
+        <!-- 已上传图片/视频 -->
         <div
           v-for="(file, index) in modelValue"
           :key="fileKey(file)"
@@ -55,9 +55,18 @@
           @keydown.enter.prevent="openFileDialog()"
           @keydown.space.prevent="openFileDialog()"
         >
-          <!-- 图片预览 -->
+          <!-- 视频缩略预览，不在上传列表中播放 -->
+          <video
+            v-if="getPreviewUrl(file) && isVideoFile(file)"
+            :src="getPreviewUrl(file)"
+            :aria-label="file.name || '视频'"
+            class="pointer-events-none absolute inset-0 size-full rounded-[2px] bg-black object-cover"
+            preload="metadata"
+            muted
+            playsinline
+          />
           <img
-            v-if="getPreviewUrl(file)"
+            v-else-if="getPreviewUrl(file)"
             :src="getPreviewUrl(file)"
             :alt="file.name"
             class="absolute inset-0 size-full rounded-[2px] object-cover"
@@ -108,10 +117,16 @@
               v-if="file.status === 'success'"
               type="button"
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
-              aria-label="查看图片"
+              :aria-label="isVideoFile(file) ? '播放视频' : '查看图片'"
+              :disabled="disabled"
               @click.stop="open(index)"
+              @keydown.enter.stop
+              @keydown.space.stop
             >
-              <Icon icon="lucide:eye" class="size-4" />
+              <Icon
+                :icon="isVideoFile(file) ? 'icon-park-outline:play' : 'lucide:eye'"
+                class="size-4"
+              />
             </button>
 
             <!-- 状态：等待/失败 - 上传按钮 -->
@@ -124,7 +139,9 @@
               type="button"
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
               :disabled="disabled"
-              :aria-label="file.status === 'fail' ? '点击重试' : '上传图片'"
+              :aria-label="
+                file.status === 'fail' ? '点击重试' : isVideoFile(file) ? '上传视频' : '上传图片'
+              "
               @click.stop="upload(file)"
             >
               <Icon
@@ -141,12 +158,26 @@
               type="button"
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
               :disabled="disabled"
-              aria-label="删除图片"
+              :aria-label="isVideoFile(file) ? '删除视频' : '删除图片'"
               @click.stop="removeFile(file.id)"
             >
               <Icon icon="lucide:trash" class="size-4" />
             </button>
           </div>
+
+          <UiButton
+            v-if="count === 1 && file.status === 'success' && !readonly && !disabled"
+            type="button"
+            variant="ghost"
+            size="sm"
+            class="absolute bottom-3 left-1/2 z-2 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1 text-xs font-medium leading-5 text-white hover:bg-black/70 hover:text-white"
+            :disabled="disabled"
+            @click.stop="openFileDialog()"
+            @keydown.enter.stop
+            @keydown.space.stop
+          >
+            重新上传
+          </UiButton>
         </div>
       </div>
     </UiImageViewer>
@@ -228,7 +259,7 @@ const {
   /** 触发上传的元素类名，默认为空字符串 */
   triggerClass?: HTMLAttributes['class']
   /** 每个元素的尺寸，数字表示宽高一致；数组第一个为宽，第二个为高。默认为 80 */
-  size?: number | [number, number]
+  size?: number | [number, number] 
   /** 上传文件大小限制，单位为字节 */
   sizeLimit?: number
   /** 图片最小尺寸限制，单位为像素 */
@@ -239,7 +270,7 @@ const {
   imageRatio?: [number, number]
   /** 最多允许的文件数量，默认为不限制 */
   count?: number
-  /** 原生 input accept，用于限制可选文件类型，默认为 image/* */
+  /** 可选文件类型，默认为 image/*；图片和视频可设置为 image/*,video/* */
   accept?: string
   /** 是否允许一次选择多个文件 */
   multiple?: boolean
@@ -261,7 +292,7 @@ const emit = defineEmits<{
 }>()
 
 const inputRef = ref<HTMLInputElement>()
-const overCount = computed(() => fileMap.value.size >= count)
+const overCount = computed(() => count !== 1 && fileMap.value.size >= count)
 
 const previewImages = computed(() => modelValue.value.map((file) => getPreviewUrl(file) || ''))
 const itemWidth = computed(() => (Array.isArray(size) ? size[0] : size))
@@ -351,10 +382,10 @@ function handleInputChange(event: Event) {
 }
 
 async function addFiles(rawFiles: File[]) {
-  if (readonly) return
+  if (disabled || readonly) return
 
-  const selected = multiple ? rawFiles : rawFiles.slice(0, 1)
-  const remainingCount = Math.max(0, count - fileMap.value.size)
+  const selected = multiple && count !== 1 ? rawFiles : rawFiles.slice(0, 1)
+  const remainingCount = count === 1 ? 1 : Math.max(0, count - fileMap.value.size)
   const allowedFiles = selected.slice(0, remainingCount)
 
   if (!allowedFiles.length) {
@@ -376,6 +407,16 @@ async function addFiles(rawFiles: File[]) {
       size: rawFile.size,
       status: autoUpload ? 'progress' : 'waiting',
       type: rawFile.type,
+    }
+
+    if (count === 1) {
+      for (const url of previewMap.value.values()) {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url)
+        }
+      }
+      previewMap.value.clear()
+      fileMap.value.clear()
     }
 
     fileMap.value.set(file.id, file)
@@ -403,7 +444,7 @@ async function beforeUpload(file: File) {
     return false
   }
 
-  return imageSizeCheck(file)
+  return isVideoMedia(file.name, file.type) || imageSizeCheck(file)
 }
 
 const acceptList = computed<Accept[]>(() => {
@@ -530,7 +571,9 @@ async function uploadOne(file: UploadFile) {
     if (previewUrl?.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl)
     }
-    previewMap.value.set(file.id, url)
+    if (fileMap.value.has(file.id)) {
+      previewMap.value.set(file.id, url)
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : '文件上传失败'
     setFileState(file.id, { status: 'fail', percent: 0 })
@@ -578,6 +621,22 @@ function removeFile(id: string) {
 
 function fileKey(file: UploadFile) {
   return `${file.name}-${file.size ?? 0}-${file.url ?? ''}-${file.status ?? ''}`
+}
+
+/** 优先使用媒体类型，缺失时从文件名或地址识别视频。 */
+function isVideoMedia(src = '', type = '') {
+  if (type === 'video' || type.startsWith('video/')) {
+    return true
+  }
+  if (type === 'image' || type.startsWith('image/')) {
+    return false
+  }
+  return /\.(mp4|webm|ogg|ogv|mov|m4v)(?:[?#]|$)/i.test(src) || /^data:video\//i.test(src)
+}
+
+function isVideoFile(file: UploadFile) {
+  const type = file.type || file.raw?.type
+  return isVideoMedia(file.name, type) || isVideoMedia(file.url, type)
 }
 
 /**

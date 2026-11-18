@@ -107,7 +107,7 @@ const selectedOptions = computed(() =>
   innerOptions.value.filter((o) => selectedValueList.value.includes(o.value as ComboboxValue)),
 )
 const queryId = useId()
-const { data, status } = useQuery<TData[]>({
+const { data, status, refetch } = useQuery<TData[]>({
   queryKey: computed(() => ['ui-combobox', queryId, params]),
   queryFn: () => (api ? api(params as TParams) : Promise.resolve([])),
   staleTime: 0,
@@ -167,6 +167,8 @@ function isOptionSelected(value: ComboboxValue) {
 function getOptionValue(value: ComboboxValue | undefined, index: number) {
   return `${index}:${typeof value}:${String(value)}`
 }
+
+defineExpose({ refetch })
 </script>
 
 <template>
@@ -271,6 +273,12 @@ function getOptionValue(value: ComboboxValue | undefined, index: number) {
           </CommandGroup>
         </CommandList>
       </Command>
+      <template v-if="$slots.footer">
+        <UiSeparator />
+        <div class="p-1">
+          <slot name="footer" :close="() => (open = false)" />
+        </div>
+      </template>
     </PopoverContent>
   </Popover>
 </template>

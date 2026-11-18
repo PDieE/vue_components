@@ -1,6 +1,6 @@
 {
   "name": "vue_components",
-  "version": "26.11.12",
+  "version": "26.11.18",
   "private": true,
   "type": "module",
   "scripts": {
@@ -43,6 +43,7 @@
     "image-dimensions": "^2.6.0",
     "nanoid": "^6.0.2",
     "photoswipe": "^5.4.4",
+    "photoswipe-video-plugin": "^1.0.2",
     "pretty-bytes": "^7.2.0",
     "qs": "^6.16.1",
     "reka-ui": "^2.11.0",
