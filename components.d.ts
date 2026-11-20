@@ -70,6 +70,7 @@ declare module 'vue' {
     UiCommandList: typeof import('./src/components/ui/command/CommandList.vue')['default']
     UiCommandSeparator: typeof import('./src/components/ui/command/CommandSeparator.vue')['default']
     UiCommandShortcut: typeof import('./src/components/ui/command/CommandShortcut.vue')['default']
+    UiConfigProvider: typeof import('./src/components/ui/config-provider/ConfigProvider.vue')['default']
     UiDataTable: typeof import('./src/components/ui/data-table/DataTable.vue')['default']
     UiDataTableEllipsis: typeof import('./src/components/ui/data-table/DataTableEllipsis.vue')['default']
     UiDatePicker: typeof import('./src/components/ui/date-picker/DatePicker.vue')['default']

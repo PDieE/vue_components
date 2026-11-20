@@ -37,7 +37,7 @@
         <UploadFolderIcon class="h-11.75 w-15 shrink-0" aria-hidden="true" />
         <div class="flex shrink-0 flex-col items-start gap-1 overflow-hidden text-center">
           <p class="whitespace-nowrap text-sm font-medium leading-5.5 text-[#475569]">
-            <slot name="label">点击或拖拽文件到此处上传</slot>
+            <slot name="label">{{ t('upload.drop') }}</slot>
           </p>
           <p class="whitespace-nowrap text-xs font-normal leading-5 text-[#94a3b8]">
             {{ acceptTip }}
@@ -86,7 +86,7 @@
             :href="file.url"
             :download="file.name"
             target="_blank"
-            aria-label="下载文件"
+            :aria-label="t('upload.download')"
             @click.stop
           >
             <template #icon>
@@ -104,7 +104,7 @@
             :disabled="disabled"
             variant="ghost"
             size="icon-xs"
-            aria-label="上传文件"
+            :aria-label="t('upload.uploadFile')"
             @click.stop="upload(file)"
           >
             <template #icon>
@@ -148,10 +148,10 @@
             variant="ghost"
             theme="brand"
             size="xs"
-            aria-label="点击重试"
+            :aria-label="t('upload.retry')"
             @click.stop="upload(file)"
           >
-            点击重试
+            {{ t('upload.retry') }}
           </UiButton>
         </div>
 
@@ -162,7 +162,7 @@
           variant="ghost"
           theme="destructive"
           size="icon-xs"
-          aria-label="删除文件"
+          :aria-label="t('upload.deleteFile')"
           @click.stop="removeFile(file.id)"
         >
           <template #icon>
@@ -188,6 +188,7 @@ import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { UploadFile } from '.'
 import FileExcelIcon from './svg/file-excel.svg'
@@ -222,6 +223,8 @@ watchDebounced(
   },
   { immediate: true, debounce: 100, maxWait: 200 },
 )
+
+const { t } = useUiLocale()
 
 const {
   sizeLimit = Infinity,
@@ -286,26 +289,26 @@ const isReadonlyStyle = computed(() => readonly || overCount.value)
 const acceptTip = computed(() => {
   if (!accept) {
     return sizeLimit === Infinity
-      ? '支持任意格式'
-      : `最大${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`
+      ? t('upload.anyFile')
+      : t('upload.sizeLimit', { size: prettyBytes(sizeLimit, { binary: true }).replace('i', '') })
   }
   const types = accept
     .split(',')
     .map((item) => item.trim().replace(/^\./, '').toUpperCase())
     .filter(Boolean)
-    .join('，')
+    .join(t('upload.listSeparator'))
   const limit =
     sizeLimit === Infinity
       ? ''
-      : `(最大${prettyBytes(sizeLimit, { binary: true }).replace('i', '')})`
-  return `支持${types}${limit}`
+      : `(${t('upload.sizeLimit', { size: prettyBytes(sizeLimit, { binary: true }).replace('i', '') })})`
+  return limit ? t('upload.typesAndLimit', { types, limit }) : t('upload.types', { types })
 })
 const progressCircumference = 2 * Math.PI * 6
 
 /** 打开文件选择框 */
 function openFileDialog() {
   if (overCount.value) {
-    warn(`文件数量已达到上限 ${count} 份`)
+    warn(t('upload.countReached', { count }))
     return
   }
   if (disabled || readonly) {
@@ -408,7 +411,7 @@ async function addFiles(rawFiles: File[]) {
   const allowedFiles = selected.slice(0, remainingCount)
 
   if (!allowedFiles.length) {
-    warn(`文件数量不可超过 ${count} 份`)
+    warn(t('upload.maxCount', { count }))
     return
   }
 
@@ -447,12 +450,18 @@ function createUploadFile(rawFile: File): UploadFile {
  */
 async function beforeUpload(file: File) {
   if (file.size > sizeLimit) {
-    warn(`${file.name} 超过 ${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`, file)
+    warn(
+      t('upload.sizeExceeded', {
+        name: file.name,
+        size: prettyBytes(sizeLimit, { binary: true }).replace('i', ''),
+      }),
+      file,
+    )
     return false
   }
 
   if (!acceptCheck(file)) {
-    warn(`${file.name} 的类型不符合要求`, file)
+    warn(t('upload.invalidType', { name: file.name }), file)
     return false
   }
 
@@ -543,24 +552,27 @@ async function imageSizeCheck(file: File) {
 
   const { min, max } = imageSize.value || {}
   if (min && image.width < min.width) {
-    warn(`${file.name} 宽度小于 ${min.width}px`, file)
+    warn(t('upload.minWidth', { name: file.name, width: min.width }), file)
     return false
   }
   if (min && image.height < min.height) {
-    warn(`${file.name} 高度小于 ${min.height}px`, file)
+    warn(t('upload.minHeight', { name: file.name, height: min.height }), file)
     return false
   }
   if (max && image.width > max.width) {
-    warn(`${file.name} 宽度大于 ${max.width}px`, file)
+    warn(t('upload.maxWidth', { name: file.name, width: max.width }), file)
     return false
   }
   if (max && image.height > max.height) {
-    warn(`${file.name} 高度大于 ${max.height}px`, file)
+    warn(t('upload.maxHeight', { name: file.name, height: max.height }), file)
     return false
   }
 
   if (imageRatio && image.width / image.height !== imageRatio[0] / imageRatio[1]) {
-    warn(`${file.name} 的比例不符合 ${imageRatio[0]}:${imageRatio[1]}`, file)
+    warn(
+      t('upload.invalidRatio', { name: file.name, width: imageRatio[0], height: imageRatio[1] }),
+      file,
+    )
     return false
   }
 
@@ -584,7 +596,7 @@ async function uploadOne(file: UploadFile) {
     })
     setFileState(file.id, { status: 'success', percent: 100, url })
   } catch (error) {
-    const message = error instanceof Error ? error.message : '文件上传失败'
+    const message = error instanceof Error ? error.message : t('upload.failed')
     setFileState(file.id, { status: 'fail', percent: 0 })
     warn(message, file)
   }

@@ -9,11 +9,15 @@ import type { DateRange } from 'reka-ui'
 import type { HtmlHTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 const modelValue = defineModel<[string, string]>()
+
+const { t, locale } = useUiLocale()
+
 const {
   valueFormat = 'YYYY-MM-DD',
-  placeholder = ['开始日期', '结束日期'],
+  placeholder,
   clearable = true,
   disabled = false,
   readonly = false,
@@ -162,11 +166,11 @@ const end = computed(() => {
         :disabled="disabled"
       >
         <span :class="['flex-1 truncate', start && 'text-foreground']">
-          {{ start ? start : placeholder[0] }}
+          {{ start ? start : (placeholder?.[0] ?? t('datePicker.start')) }}
         </span>
         <span class="text-foreground-3">-</span>
         <span :class="['flex-1 truncate', end && 'text-foreground']">
-          {{ end ? end : placeholder[1] }}
+          {{ end ? end : (placeholder?.[1] ?? t('datePicker.end')) }}
         </span>
         <CalendarIcon
           class="text-foreground-2 group-disabled:text-foreground-3"
@@ -187,7 +191,7 @@ const end = computed(() => {
         :default-placeholder="defaultPlaceholder"
         :number-of-months="2"
         disable-days-outside-current-view
-        locale="zh-CN"
+        :locale="locale"
         @update:model-value="valueChanged"
       />
     </UiPopoverContent>

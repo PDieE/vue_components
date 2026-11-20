@@ -5,6 +5,7 @@ import { RangeCalendarRoot, useForwardPropsEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import {
   RangeCalendarCell,
@@ -19,6 +20,8 @@ import {
   RangeCalendarNextButton,
   RangeCalendarPrevButton,
 } from '.'
+
+const { locale } = useUiLocale()
 
 const props = defineProps<RangeCalendarRootProps & { class?: HTMLAttributes['class'] }>()
 
@@ -35,6 +38,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     data-slot="range-calendar"
     :class="cn('p-3', props.class)"
     v-bind="forwarded"
+    :locale="props.locale ?? locale"
   >
     <RangeCalendarHeader>
       <RangeCalendarHeading />

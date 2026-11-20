@@ -1,5 +1,5 @@
 <template>
-  <UiEmptyApp v-bind="props" :description="description">
+  <UiEmptyApp v-bind="props" :description="description ?? t('simpleWrap.loadFailed')">
     <template #media>
       <slot name="media">
         <div class="pl-4.75">
@@ -12,7 +12,7 @@
     <template #content>
       <slot name="content">
         <UiButton theme="brand" @click="emits('retry')">
-          <template #icon><RefreshCcw /></template>重试
+          <template #icon><RefreshCcw /></template>{{ t('common.retry') }}
         </UiButton>
       </slot>
     </template>
@@ -23,10 +23,14 @@
 <script lang="ts" setup>
 import { RefreshCcw } from '@lucide/vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import type { EmptyAppProps } from '../empty'
 import ErrorSvg from './error.svg'
 
-const { description = '数据获取失败', ...props } = defineProps<EmptyAppProps>()
+const { t } = useUiLocale()
+
+const { description, ...props } = defineProps<EmptyAppProps>()
 const emits = defineEmits<{
   /** 重试 */
   retry: []

@@ -4,6 +4,8 @@ import { merge } from 'es-toolkit'
 import { isArray, uniqueId } from 'es-toolkit/compat'
 import qs from 'qs'
 
+import { zhCN } from '@/components/ui/config-provider'
+
 import type { LngLat, MapEvent, MarkerOptions, MarkersMap, Position } from './'
 
 type AmapServiceEvent = {
@@ -102,7 +104,7 @@ export class AmapService extends EventEmiter<AmapServiceEvent> {
 
   private markers = new Map<string, MarkersMap>()
 
-  constructor() {
+  constructor(private readonly getDraggedLabel: () => string = () => zhCN.mapSelect.dragged) {
     super()
   }
 
@@ -204,7 +206,7 @@ export class AmapService extends EventEmiter<AmapServiceEvent> {
       const offset = new this.AMap.Pixel(0, -5)
       this.emit('onMarkerDrag', e, markerMap)
       marker.setLabel({
-        content: '手动选择位置',
+        content: this.getDraggedLabel(),
         direction: 'top',
         offset,
       })

@@ -36,6 +36,7 @@ export default defineConfig({
         text: '开始',
         items: [
           { text: '快速开始', link: '/getting-started' },
+          { text: '多语言', link: '/i18n' },
           { text: '组件概览', link: '/components' }
         ]
       },

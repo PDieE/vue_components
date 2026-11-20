@@ -3,7 +3,11 @@ import type { PaginationRootEmits, PaginationRootProps } from 'reka-ui'
 import { useForwardPropsEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 const itemsPerPage = defineModel<number>('itemsPerPage', { default: 10 })
+
+const { t } = useUiLocale()
 
 const {
   showPerPageChanger = true,
@@ -77,7 +81,12 @@ function changeItemsPerPage(value: unknown) {
         v-if="showPerPageChanger"
         v-model="itemsPerPage"
         :clearable="false"
-        :options="perPageOptions.map((value) => ({ value, label: `${value} 条/页` }))"
+        :options="
+          perPageOptions.map((value) => ({
+            value,
+            label: t('pagination.perPage', { count: value }),
+          }))
+        "
         @change="changeItemsPerPage"
       />
     </UiPaginationContent>

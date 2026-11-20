@@ -2,8 +2,11 @@
 import type { HTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import { useSidebar } from './utils'
+
+const { t } = useUiLocale()
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
@@ -16,9 +19,9 @@ const { toggleSidebar } = useSidebar()
   <button
     data-sidebar="rail"
     data-slot="sidebar-rail"
-    aria-label="Toggle Sidebar"
+    :aria-label="t('sidebar.toggle')"
     :tabindex="-1"
-    title="Toggle Sidebar"
+    :title="t('sidebar.toggle')"
     :class="
       cn(
         'hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex',

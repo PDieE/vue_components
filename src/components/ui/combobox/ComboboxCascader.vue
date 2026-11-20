@@ -6,16 +6,20 @@ import type { HTMLAttributes } from 'vue'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { ComboboxOptionCascader, ComboboxValue } from '.'
 
 const modelValue = defineModel<ComboboxValue | undefined>()
+
+const { t } = useUiLocale()
+
 const {
   options = [],
   api,
   params,
   keys,
-  placeholder = '请选择',
+  placeholder,
   clearable = true,
   checkStrictly = false,
   readonly = false,
@@ -282,7 +286,11 @@ watch(open, (isOpen) => {
         :loading="status === 'pending'"
       >
         <span class="flex-1 text-left truncate">
-          {{ selectedPath.map((v) => v.label).join(' / ') || selected?.label || placeholder }}
+          {{
+            selectedPath.map((v) => v.label).join(' / ') ||
+            selected?.label ||
+            (placeholder ?? t('combobox.placeholder'))
+          }}
         </span>
         <Icon
           class="text-foreground-2"
@@ -305,7 +313,7 @@ watch(open, (isOpen) => {
             v-if="columns.length === 0"
             class="w-(--reka-popover-trigger-width) py-6 text-center text-sm"
           >
-            暂无数据
+            {{ t('common.noData') }}
           </div>
           <UiCommandGroup
             v-for="(column, level) in columns"

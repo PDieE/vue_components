@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import { useInjectFilterForm } from './context'
 
 const { moreCount } = useInjectFilterForm()!
+
+const { t } = useUiLocale()
 </script>
 
 <template>
@@ -10,7 +14,7 @@ const { moreCount } = useInjectFilterForm()!
     leave-active-class="animate-out fade-out-0 zoom-out-95 duration-200"
   >
     <div v-if="moreCount > 0" class="flex items-start col-span-full">
-      <span class="text-sm leading-6">筛选项：</span>
+      <span class="text-sm leading-6">{{ t('filterForm.active') }}</span>
       <div class="flex-1 flex flex-wrap gap-2">
         <TransitionGroup
           enter-active-class="animate-in fade-in-0 zoom-in-95 duration-200"

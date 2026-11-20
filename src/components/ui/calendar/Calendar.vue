@@ -5,10 +5,11 @@ import type { CalendarRootEmits, CalendarRootProps, DateValue } from 'reka-ui'
 import { CalendarRoot, useDateFormatter, useForwardPropsEmits } from 'reka-ui'
 import { createYear, createYearRange, toDate } from 'reka-ui/date'
 import type { HTMLAttributes, Ref } from 'vue'
-import { computed, toRaw } from 'vue'
+import { computed, toRaw, watch } from 'vue'
 
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { LayoutTypes } from '.'
 import {
@@ -24,6 +25,8 @@ import {
   CalendarNextButton,
   CalendarPrevButton,
 } from '.'
+
+const { locale } = useUiLocale()
 
 const props = withDefaults(
   defineProps<
@@ -46,8 +49,12 @@ const placeholder = useVModel(props, 'placeholder', emits, {
   passive: true,
   defaultValue: props.defaultPlaceholder ?? today(getLocalTimeZone()),
 }) as Ref<DateValue>
+const formatter = useDateFormatter(props.locale ?? locale.value)
 
-const formatter = useDateFormatter(props.locale ?? 'en')
+watch(
+  () => props.locale ?? locale.value,
+  (value) => formatter.setLocale(value),
+)
 
 const yearRange = computed(() => {
   return (
@@ -140,6 +147,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
   <CalendarRoot
     v-slot="{ grid, weekDays, date }"
     v-bind="forwarded"
+    :locale="props.locale ?? locale"
     v-model:placeholder="placeholder"
     data-slot="calendar"
     :class="cn('p-3', props.class)"

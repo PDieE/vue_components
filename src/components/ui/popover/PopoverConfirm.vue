@@ -7,6 +7,9 @@ import type { HTMLAttributes } from 'vue'
 import { computed, shallowRef } from 'vue'
 
 import type { ButtonProps } from '@/components/ui/button'
+import { useUiLocale } from '@/components/ui/config-provider'
+
+const { t } = useUiLocale()
 
 const props = withDefaults(
   defineProps<
@@ -106,10 +109,10 @@ function confirm() {
       </div>
       <div class="text-right space-x-2">
         <UiButton v-bind="{ variant: 'outline', size: 'xs', ...cancelBtn }" @click="cancel">
-          {{ cancelText ?? '取消' }}
+          {{ cancelText ?? t('common.cancel') }}
         </UiButton>
         <UiButton v-bind="{ theme: 'brand', size: 'xs', ...confirmBtn }" @click="confirm">
-          {{ confirmText ?? '确认' }}
+          {{ confirmText ?? t('common.confirm') }}
         </UiButton>
       </div>
     </UiPopoverContent>

@@ -17,10 +17,10 @@
         </div>
         <div class="ml-3 flex flex-col justify-center overflow-hidden mr-3">
           <span class="truncate text-sm font-medium text-gray-900 leading-tight">
-            {{ file?.name || '未知文件' }}
+            {{ file?.name || t('upload.unknownFile') }}
           </span>
           <span v-if="errorMessage" class="text-xs text-red-500 leading-tight mt-0.5">
-            {{ errorMessage }}
+            {{ errorMessage?.() }}
           </span>
           <span v-else class="text-xs text-gray-500 leading-tight mt-0.5">
             {{ formatFileSize(file?.size || 0) }}
@@ -33,7 +33,7 @@
           <button
             v-if="errorMessage && canRetry"
             class="cursor-pointer bg-transparent border-none rounded-0.75 flex items-center justify-center size-6 text-gray-400 hover:text-gray-600"
-            title="重试"
+            :title="t('common.retry')"
             @click="doUpload"
           >
             <Icon icon="tdesign:refresh" class="text-4" />
@@ -59,7 +59,11 @@ import prettyBytes from 'pretty-bytes'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { computed, onBeforeMount, shallowRef } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import { useBridgeStore } from '../../injectionState'
+
+const { t } = useUiLocale()
 
 const { node, deleteNode, getPos, editor } = defineProps(nodeViewProps)
 
@@ -92,7 +96,7 @@ const removeNode = () => {
   deleteNode()
 }
 const progress = shallowRef(0)
-const errorMessage = shallowRef('')
+const errorMessage = shallowRef<() => string>()
 const canRetry = shallowRef(false)
 
 /** accept 属性的对象形式 */
@@ -107,12 +111,19 @@ interface Accept {
  */
 async function beforeUpload(file: File) {
   if (file.size > sizeLimit) {
-    warn(`${file.name} 超过 ${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`, file)
+    warn(
+      () =>
+        t('upload.sizeExceeded', {
+          name: file.name,
+          size: prettyBytes(sizeLimit, { binary: true }).replace('i', ''),
+        }),
+      file,
+    )
     return false
   }
 
   if (!acceptCheck(file)) {
-    warn(`${file.name} 的类型不符合要求`, file)
+    warn(() => t('upload.invalidType', { name: file.name }), file)
     return false
   }
 
@@ -199,24 +210,28 @@ async function imageSizeCheck(file: File) {
 
   const { min, max } = imageSize.value || {}
   if (min && image.width < min.width) {
-    warn(`${file.name} 宽度小于 ${min.width}px`, file)
+    warn(() => t('upload.minWidth', { name: file.name, width: min.width }), file)
     return false
   }
   if (min && image.height < min.height) {
-    warn(`${file.name} 高度小于 ${min.height}px`, file)
+    warn(() => t('upload.minHeight', { name: file.name, height: min.height }), file)
     return false
   }
   if (max && image.width > max.width) {
-    warn(`${file.name} 宽度大于 ${max.width}px`, file)
+    warn(() => t('upload.maxWidth', { name: file.name, width: max.width }), file)
     return false
   }
   if (max && image.height > max.height) {
-    warn(`${file.name} 高度大于 ${max.height}px`, file)
+    warn(() => t('upload.maxHeight', { name: file.name, height: max.height }), file)
     return false
   }
 
   if (imageRatio && image.width / image.height !== imageRatio[0] / imageRatio[1]) {
-    warn(`${file.name} 的比例不符合 ${imageRatio[0]}:${imageRatio[1]}`, file)
+    warn(
+      () =>
+        t('upload.invalidRatio', { name: file.name, width: imageRatio[0], height: imageRatio[1] }),
+      file,
+    )
     return false
   }
 
@@ -228,15 +243,15 @@ async function imageSizeCheck(file: File) {
  * @param message 警告信息
  * @param file 关联的文件
  */
-function warn(message: string, file?: File) {
+function warn(message: () => string, file?: File) {
   errorMessage.value = message
-  console.warn(message, file)
+  console.warn(message(), file)
 }
 
 /** 进行上传 */
 const doUpload = async () => {
   if (!file.value) {
-    errorMessage.value = '文件不存在'
+    errorMessage.value = () => t('upload.missingFile')
     canRetry.value = false
     return
   }
@@ -247,7 +262,7 @@ const doUpload = async () => {
     return
   }
 
-  errorMessage.value = ''
+  errorMessage.value = undefined
   canRetry.value = true
   ossPreUploadFile(file.value, {
     onUploadProgress: (event) => {
@@ -274,7 +289,7 @@ const doUpload = async () => {
       editor.view.dispatch(editor.state.tr.replaceWith(pos, pos + 1, imageNode))
     })
     .catch((error) => {
-      errorMessage.value = error instanceof Error ? error.message : '图片上传失败'
+      errorMessage.value = () => (error instanceof Error ? error.message : t('upload.imageFailed'))
       canRetry.value = true
       console.warn(error)
     })

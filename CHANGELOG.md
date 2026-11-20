@@ -2,7 +2,10 @@
 
 ### 🚀 Features
 
+- feat: 增加了内置多语言目前支持中文、英文（美国）两种语言
+- feat: [Components]新增 `UiConfigProvider`，通过语言代码切换中英文，默认使用简体中文。
 - feat: [Components]统一使用`@lucide/vue`图标库
+- feat: [Components]`UiSonner`的样式改为组件自身引入
 - feat: [Composables]新增`useAsyncAction`，用于处理异步操作
 - feat: [Composables]新增`useStatus`，用于处理状态管理
 - feat: [Composables]`usePaginationData`增加原始分页参数、原始分页数据、适配器方便不同项目适配；去除api的多参数支持

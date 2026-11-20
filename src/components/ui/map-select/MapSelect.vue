@@ -4,15 +4,15 @@
   <UiDialogApp
     v-model:open="visible"
     size="80vw"
-    title="地址选择"
-    description="点击地图直接选点，或在左上角搜索框输入地点名称进行快速定位，确认后点击“确定”即可完成选择"
+    :title="t('mapSelect.title')"
+    :description="t('mapSelect.description')"
   >
     <template #trigger>
       <UiInputGroup class="cursor-pointer" @click="toAMap()">
         <UiInputGroupInput
           class="cursor-pointer"
           :model-value="showLabel ? showLabel : initialAddress"
-          placeholder="从地图选择地址"
+          :placeholder="t('mapSelect.placeholder')"
           readonly
         />
 
@@ -37,10 +37,12 @@
     <template v-if="!readonly" #footer>
       <UiDialogClose as-child>
         <UiButton wide variant="outline">
-          {{ readonly ? '关闭' : '取消' }}
+          {{ readonly ? t('common.close') : t('common.cancel') }}
         </UiButton>
       </UiDialogClose>
-      <UiButton wide theme="brand" :loading="finishLoading" @click="onFinish">确定</UiButton>
+      <UiButton wide theme="brand" :loading="finishLoading" @click="onFinish">{{
+        t('common.ok')
+      }}</UiButton>
     </template>
   </UiDialogApp>
 </template>
@@ -51,9 +53,14 @@ import { get } from 'es-toolkit/compat'
 import { useTemplateRef, ref, computed, unref, nextTick } from 'vue'
 import { toast } from 'vue-sonner'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import { MapSelectContainer, type MapSelectValue } from './'
 
 defineOptions({ name: 'AMapSelect' })
+
+const { t } = useUiLocale()
+
 const {
   /** 初始地址 */
   initialAddress,
@@ -102,14 +109,14 @@ async function toAMap() {
 async function onFinish() {
   try {
     if (!unref(aMapContainerRef)) {
-      return toast.error('地图未加载', { position: 'top-center' })
+      return toast.error(t('mapSelect.unavailable'), { position: 'top-center' })
     }
     finishLoading.value = true
     const selectInfo = await unref(aMapContainerRef)?.getSelectMarker()
     // 这里需要处理一下数据
     save(formatData(selectInfo))
   } catch {
-    toast.error('选择失败', { position: 'top-center' })
+    toast.error(t('mapSelect.failed'), { position: 'top-center' })
   } finally {
     finishLoading.value = false
   }

@@ -10,6 +10,7 @@ import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 
 import { valueUpdater } from '@/components/ui/table/utils'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { DataTableColumn, DataTableColumnMeta, DataTableColumnMetaSelectOptions } from '.'
 import { getAccessorKey, getCellEllipsisSlotName, getCellContent, getCellSlotName } from '.'
@@ -36,6 +37,8 @@ type DataTableTreeOptions<TData> = {
   treeNodeColumnIndex: number
 }
 
+const { t } = useUiLocale()
+
 const props = withDefaults(
   defineProps<{
     /** TanStack Table 列定义，用于描述每一列的字段、标题、宽度和渲染方式。 */
@@ -57,7 +60,7 @@ const props = withDefaults(
     /** 树配置 */
     tree?: Partial<DataTableTreeOptions<TData>>
   }>(),
-  { emptyText: '暂无数据', loading: false, virtualScroll: false },
+  { loading: false, virtualScroll: false },
 )
 
 /**
@@ -774,7 +777,7 @@ defineExpose({ expandAll, foldAll })
                   :disabled="
                     !table.getPreSelectedRowModel().flatRows.some((row) => row.getCanSelect())
                   "
-                  aria-label="选择全部"
+                  :aria-label="t('dataTable.selectAll')"
                   @update:model-value="toggleAllSelectableRows($event === true)"
                 />
               </template>
@@ -864,7 +867,9 @@ defineExpose({ expandAll, foldAll })
                     'mr-1 size-5 shrink-0 p-0 text-muted-foreground hover:text-foreground',
                     !row.getCanExpand() && 'invisible pointer-events-none',
                   ]"
-                  :aria-label="row.getIsExpanded() ? '收起节点' : '展开节点'"
+                  :aria-label="
+                    row.getIsExpanded() ? t('dataTable.collapse') : t('dataTable.expand')
+                  "
                   :aria-expanded="row.getCanExpand() ? row.getIsExpanded() : undefined"
                   @click.stop="toggleTreeNode(row)"
                 >
@@ -878,7 +883,7 @@ defineExpose({ expandAll, foldAll })
                     class="size-4 accent-brand"
                     :checked="row.getIsSelected()"
                     :disabled="!row.getCanSelect()"
-                    aria-label="选择行"
+                    :aria-label="t('dataTable.selectRow')"
                     @click.stop
                     @change="toggleRowSelected(row, true)"
                   />
@@ -886,7 +891,7 @@ defineExpose({ expandAll, foldAll })
                     v-else
                     :model-value="row.getIsSelected()"
                     :disabled="!row.getCanSelect()"
-                    aria-label="选择行"
+                    :aria-label="t('dataTable.selectRow')"
                     @click.stop
                     @update:model-value="toggleRowSelected(row, $event === true)"
                   />
@@ -961,7 +966,7 @@ defineExpose({ expandAll, foldAll })
         </template>
         <!-- 空状态会自动按当前可见列数量合并单元格。 -->
         <UiTableEmpty v-else :colspan="visibleColumns.length">
-          {{ emptyText }}
+          {{ emptyText ?? t('common.noData') }}
         </UiTableEmpty>
       </UiTableBody>
     </UiTable>

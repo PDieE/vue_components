@@ -5,8 +5,11 @@ import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useUiLocale()
 
 const modelValue = defineModel<string | number>()
 const {
@@ -139,7 +142,7 @@ function togglePasswordVisible() {
         type="button"
         size="icon-xs"
         :disabled="disabled"
-        :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+        :aria-label="showPassword ? t('input.hidePassword') : t('input.showPassword')"
         :aria-pressed="showPassword"
         @mousedown.prevent
         @click="togglePasswordVisible"

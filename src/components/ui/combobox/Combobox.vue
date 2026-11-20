@@ -17,19 +17,23 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import UiTag from '@/components/ui/tag/Tag.vue'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { ComboboxChangeOption, ComboboxModelValue, ComboboxOption, ComboboxValue } from '.'
 
 const modelValue = defineModel<ComboboxModelValue>()
+
+const { t } = useUiLocale()
+
 const {
   options = [],
   api,
   params,
   keys,
-  placeholder = '请选择',
+  placeholder,
   clearable = true,
   filter = false,
-  filterPlaceholder = '搜索',
+  filterPlaceholder,
   disabled = false,
   readonly = false,
   loading = false,
@@ -214,7 +218,9 @@ defineExpose({ refetch })
             </span>
           </UiTag>
         </span>
-        <span v-else class="flex-1 truncate text-left">{{ selected?.label || placeholder }}</span>
+        <span v-else class="flex-1 truncate text-left">{{
+          selected?.label || (placeholder ?? t('combobox.placeholder'))
+        }}</span>
         <Icon
           class="text-foreground-2"
           :class="
@@ -236,10 +242,16 @@ defineExpose({ refetch })
     </PopoverTrigger>
     <PopoverContent class="w-(--reka-popover-trigger-width) p-0 z-1000">
       <Command>
-        <CommandInput v-if="filter" class="h-9" :placeholder="filterPlaceholder" />
+        <CommandInput
+          v-if="filter"
+          class="h-9"
+          :placeholder="filterPlaceholder ?? t('common.search')"
+        />
         <CommandList>
-          <div v-if="innerOptions.length === 0" class="py-6 text-center text-sm">暂无数据</div>
-          <CommandEmpty v-else>无结果</CommandEmpty>
+          <div v-if="innerOptions.length === 0" class="py-6 text-center text-sm">
+            {{ t('common.noData') }}
+          </div>
+          <CommandEmpty v-else>{{ t('combobox.noResults') }}</CommandEmpty>
           <CommandGroup class="space-y-0.5">
             <template
               v-for="(option, index) in innerOptions"

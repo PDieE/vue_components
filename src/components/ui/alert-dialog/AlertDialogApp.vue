@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import type { AlertDialogAppProps } from '.'
 import AlertDialog from './AlertDialog.vue'
 import AlertDialogAction from './AlertDialogAction.vue'
@@ -12,12 +14,14 @@ import AlertDialogTrigger from './AlertDialogTrigger.vue'
 
 defineOptions({ inheritAttrs: false })
 
+const { t } = useUiLocale()
+
 const open = defineModel<boolean>('open', { default: false })
 const {
   title,
   description,
-  confirmText = '确认',
-  cancelText = '取消',
+  confirmText,
+  cancelText,
   confirmTheme = 'brand',
   closeOnEscape = true,
 } = defineProps<AlertDialogAppProps>()
@@ -64,10 +68,10 @@ function openChange(value: boolean) {
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="emits('cancel', $event)">
-          {{ cancelText }}
+          {{ cancelText ?? t('common.cancel') }}
         </AlertDialogCancel>
         <AlertDialogAction :theme="confirmTheme" @click="emits('confirm', $event)">
-          {{ confirmText }}
+          {{ confirmText ?? t('common.confirm') }}
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
