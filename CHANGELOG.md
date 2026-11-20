@@ -1,3 +1,17 @@
+# 2026-11-20
+
+### 🚀 Features
+
+- feat: [Components]统一使用`@lucide/vue`图标库
+- feat: [Composables]新增`useAsyncAction`，用于处理异步操作
+- feat: [Composables]新增`useStatus`，用于处理状态管理
+- feat: [Composables]`usePaginationData`增加原始分页参数、原始分页数据、适配器方便不同项目适配；去除api的多参数支持
+- feat: [Skills]`list-page`优化对顶部统计和确实字段（数据）的约束
+
+### 🐞 Bug Fixes
+
+### 🚧 Others
+
 # 2026-11-18
 
 ### 🚀 Features

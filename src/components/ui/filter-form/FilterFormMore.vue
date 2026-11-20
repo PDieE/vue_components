@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="TForm extends Record<string, any>, K extends keyof TForm">
 import { Icon } from '@iconify/vue'
+import { Filter } from '@lucide/vue'
 import { cloneDeep, pick } from 'es-toolkit'
 
 import { useInjectFilterForm } from './context'
@@ -54,7 +55,7 @@ function search() {
         :theme="open || moreCount > 0 ? 'brand' : 'default'"
         :size="!moreCount ? 'icon' : undefined"
       >
-        <template #icon><Icon icon="lucide:filter" /></template>
+        <template #icon><Filter class="size-4" /></template>
         <template v-if="moreCount">({{ moreCount }})</template>
       </UiButton>
     </UiPopoverTrigger>

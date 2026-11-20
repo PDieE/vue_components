@@ -166,9 +166,8 @@
           @click.stop="removeFile(file.id)"
         >
           <template #icon>
-            <Icon
+            <Trash
               class="size-3 text-foreground-2 transition-all group-hover/button:text-destructive"
-              icon="lucide:trash"
             />
           </template>
         </UiButton>
@@ -179,6 +178,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { Trash } from '@lucide/vue'
 import { cloneDeep, isEqual, omit } from 'es-toolkit'
 import { imageDimensionsFromData } from 'image-dimensions'
 import { nanoid } from 'nanoid'

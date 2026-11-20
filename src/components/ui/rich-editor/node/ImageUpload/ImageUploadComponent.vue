@@ -13,7 +13,7 @@
         <div
           class="flex h-10 w-10 min-w-10 items-center justify-center rounded-full bg-[#6b4bf5] text-white"
         >
-          <Icon icon="lucide:cloud-upload" class="h-6 w-6" />
+          <CloudUpload class="h-6 w-6" />
         </div>
         <div class="ml-3 flex flex-col justify-center overflow-hidden mr-3">
           <span class="truncate text-sm font-medium text-gray-900 leading-tight">
@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { CloudUpload } from '@lucide/vue'
 import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import { imageDimensionsFromData } from 'image-dimensions'
 import prettyBytes from 'pretty-bytes'

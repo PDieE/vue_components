@@ -29,7 +29,7 @@
           @keydown.enter.prevent="openFileDialog()"
           @keydown.space.prevent="openFileDialog()"
         >
-          <Icon icon="lucide:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
+          <Plus class="size-5 text-[#64748b]" aria-hidden="true" />
           <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
         </div>
 
@@ -123,10 +123,7 @@
               @keydown.enter.stop
               @keydown.space.stop
             >
-              <Icon
-                :icon="isVideoFile(file) ? 'icon-park-outline:play' : 'lucide:eye'"
-                class="size-4"
-              />
+              <Eye class="size-4" />
             </button>
 
             <!-- 状态：等待/失败 - 上传按钮 -->
@@ -161,7 +158,7 @@
               :aria-label="isVideoFile(file) ? '删除视频' : '删除图片'"
               @click.stop="removeFile(file.id)"
             >
-              <Icon icon="lucide:trash" class="size-4" />
+              <Trash class="size-4" />
             </button>
           </div>
 
@@ -201,6 +198,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { Eye, Plus, Trash } from '@lucide/vue'
 import { cloneDeep, isEqual, omit } from 'es-toolkit'
 import { imageDimensionsFromData } from 'image-dimensions'
 import { nanoid } from 'nanoid'
