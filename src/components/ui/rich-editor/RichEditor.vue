@@ -12,14 +12,14 @@
     >
       <!-- 撤销/重做 -->
       <RichEditorButton
-        tip="撤销"
+        :tip="t('richEditor.undo')"
         :disabled="!editor.can().chain().focus().undo().run()"
         @click="editor.chain().focus().undo().run()"
       >
         <template #icon><Icon icon="tdesign:rollback" inline /></template>
       </RichEditorButton>
       <RichEditorButton
-        tip="重做"
+        :tip="t('richEditor.redo')"
         :disabled="!editor.can().chain().focus().redo().run()"
         @click="editor.chain().focus().redo().run()"
       >
@@ -27,11 +27,11 @@
       </RichEditorButton>
       <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
       <!-- 字体样式 -->
-      <RichEditorSelect tip="段落/标题" :options="headingOptions">
+      <RichEditorSelect :tip="t('richEditor.headingMenu')" :options="headingOptions">
         <template #icon><Icon icon="tdesign:clear" inline /></template>
       </RichEditorSelect>
       <RichEditorButton
-        tip="加粗"
+        :tip="t('richEditor.bold')"
         :active="editor.isActive('bold')"
         :disabled="!editor.can().chain().focus().toggleBold().run()"
         @click="editor.chain().focus().toggleBold().run()"
@@ -41,7 +41,7 @@
         </template>
       </RichEditorButton>
       <RichEditorButton
-        tip="斜体"
+        :tip="t('richEditor.italic')"
         :active="editor.isActive('italic')"
         :disabled="!editor.can().chain().focus().toggleItalic().run()"
         @click="editor.chain().focus().toggleItalic().run()"
@@ -51,7 +51,7 @@
         </template>
       </RichEditorButton>
       <RichEditorButton
-        tip="删除线"
+        :tip="t('richEditor.strike')"
         :active="editor.isActive('strike')"
         :disabled="!editor.can().chain().focus().toggleStrike().run()"
         @click="editor.chain().focus().toggleStrike().run()"
@@ -61,7 +61,7 @@
         </template>
       </RichEditorButton>
       <RichEditorButton
-        tip="行内代码"
+        :tip="t('richEditor.inlineCode')"
         :active="editor.isActive('code')"
         :disabled="!editor.can().chain().focus().toggleCode().run()"
         @click="editor.chain().focus().toggleCode().run()"
@@ -70,25 +70,31 @@
       </RichEditorButton>
       <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
       <!-- 格式/节点清除 -->
-      <RichEditorButton tip="清除格式" @click="editor.chain().focus().unsetAllMarks().run()">
+      <RichEditorButton
+        :tip="t('richEditor.clearFormatting')"
+        @click="editor.chain().focus().unsetAllMarks().run()"
+      >
         <template #icon>
           <Icon icon="tdesign:clear-formatting" inline />
         </template>
       </RichEditorButton>
-      <RichEditorButton tip="清除节点" @click="editor.chain().focus().clearNodes().run()">
+      <RichEditorButton
+        :tip="t('richEditor.clearNodes')"
+        @click="editor.chain().focus().clearNodes().run()"
+      >
         <template #icon><Icon icon="tdesign:clear" inline /></template>
       </RichEditorButton>
       <ToolbarSeparator class="w-px h-4 bg-gray-200 mx-1" />
       <!-- 其他样式 -->
       <RichEditorButton
-        tip="无序列表"
+        :tip="t('richEditor.bulletList')"
         :active="editor.isActive('bulletList')"
         @click="editor.chain().focus().toggleBulletList().run()"
       >
         <template #icon><Icon icon="tdesign:list" inline /></template>
       </RichEditorButton>
       <RichEditorButton
-        tip="有序列表"
+        :tip="t('richEditor.orderedList')"
         :active="editor.isActive('orderedList')"
         @click="editor.chain().focus().toggleOrderedList().run()"
       >
@@ -97,34 +103,40 @@
         </template>
       </RichEditorButton>
       <RichEditorButton
-        tip="代码块"
+        :tip="t('richEditor.codeBlock')"
         :active="editor.isActive('codeBlock')"
         @click="editor.chain().focus().toggleCodeBlock().run()"
       >
         <template #icon><Icon icon="tdesign:code" inline /></template>
       </RichEditorButton>
       <RichEditorButton
-        tip="块引用"
+        :tip="t('richEditor.quote')"
         :active="editor.isActive('blockquote')"
         @click="editor.chain().focus().toggleBlockquote().run()"
       >
         <template #icon><Icon icon="tdesign:quote" inline /></template>
       </RichEditorButton>
-      <RichEditorButton tip="分割线" @click="editor.chain().focus().setHorizontalRule().run()">
+      <RichEditorButton
+        :tip="t('richEditor.horizontalRule')"
+        @click="editor.chain().focus().setHorizontalRule().run()"
+      >
         <template #icon>
           <Icon icon="tdesign:component-divider-vertical" inline />
         </template>
       </RichEditorButton>
-      <RichEditorButton tip="强制换行" @click="editor.chain().focus().setHardBreak().run()">
+      <RichEditorButton
+        :tip="t('richEditor.hardBreak')"
+        @click="editor.chain().focus().setHardBreak().run()"
+      >
         <template #icon><Icon icon="tdesign:enter" inline /></template>
       </RichEditorButton>
       <RichEditorColor
         icon="tdesign:textformat-color"
         :color="textColor"
-        tip="字体颜色"
+        :tip="t('richEditor.textColor')"
         @confirm="setTextColor"
       />
-      <RichEditorButton tip="添加图片" @click="addImage()">
+      <RichEditorButton :tip="t('richEditor.addImage')" @click="addImage()">
         <template #icon><Icon icon="tdesign:image-add" inline /></template>
       </RichEditorButton>
       <input
@@ -140,7 +152,7 @@
       class="p-2 min-h-[var(--content-min-height)] max-h-[var(--content-max-height)] h-[var(--content-height)] overflow-y-auto"
       :style="contentStyle"
       :editor="editor"
-      placeholder="请输入内容"
+      :placeholder="t('richEditor.placeholder')"
     />
   </div>
 </template>
@@ -164,6 +176,8 @@ import {
   watch,
 } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import { useProvideBridgeStore } from './injectionState'
 import { Image } from './node/Image'
 import { ImageUpload } from './node/ImageUpload'
@@ -173,6 +187,8 @@ import RichEditorSelect from './RichEditorSelect.vue'
 import type { RichEditorProps, RichEditorSelectOption } from './types'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useUiLocale()
 
 const innerValue = defineModel<string>('modelValue', { default: '' })
 const emit = defineEmits<{
@@ -284,49 +300,49 @@ const headingOptions = computed<RichEditorSelectOption[]>(() => {
   }
   return [
     {
-      label: '段落',
+      label: t('richEditor.paragraph'),
       value: 'paragraph',
       icon: 'hugeicons:paragraph',
       active: editor.value.isActive('paragraph'),
       action: () => editor.value?.chain().focus().setParagraph().run(),
     },
     {
-      label: '标题 1',
+      label: t('richEditor.heading', { level: 1 }),
       value: 'heading-01',
       icon: 'hugeicons:heading-01',
       active: editor.value.isActive('heading', { level: 1 }),
       action: () => editor.value?.chain().focus().toggleHeading({ level: 1 }).run(),
     },
     {
-      label: '标题 2',
+      label: t('richEditor.heading', { level: 2 }),
       value: 'heading-02',
       icon: 'hugeicons:heading-02',
       active: editor.value.isActive('heading', { level: 2 }),
       action: () => editor.value?.chain().focus().toggleHeading({ level: 2 }).run(),
     },
     {
-      label: '标题 3',
+      label: t('richEditor.heading', { level: 3 }),
       value: 'heading-03',
       icon: 'hugeicons:heading-03',
       active: editor.value.isActive('heading', { level: 3 }),
       action: () => editor.value?.chain().focus().toggleHeading({ level: 3 }).run(),
     },
     {
-      label: '标题 4',
+      label: t('richEditor.heading', { level: 4 }),
       value: 'heading-04',
       icon: 'hugeicons:heading-04',
       active: editor.value.isActive('heading', { level: 4 }),
       action: () => editor.value?.chain().focus().toggleHeading({ level: 4 }).run(),
     },
     {
-      label: '标题 5',
+      label: t('richEditor.heading', { level: 5 }),
       value: 'heading-05',
       icon: 'hugeicons:heading-05',
       active: editor.value.isActive('heading', { level: 5 }),
       action: () => editor.value?.chain().focus().toggleHeading({ level: 5 }).run(),
     },
     {
-      label: '标题 6',
+      label: t('richEditor.heading', { level: 6 }),
       value: 'heading-06',
       icon: 'hugeicons:heading-06',
       active: editor.value.isActive('heading', { level: 6 }),

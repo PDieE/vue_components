@@ -6,6 +6,9 @@ import { PaginationEllipsis } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
+
+const { t } = useUiLocale()
 
 const props = defineProps<PaginationEllipsisProps & { class?: HTMLAttributes['class'] }>()
 
@@ -25,7 +28,7 @@ const delegatedProps = reactiveOmit(props, 'class')
   >
     <slot>
       <MoreHorizontal class="size-3" />
-      <span class="sr-only">More pages</span>
+      <span class="sr-only">{{ t('pagination.ellipsis') }}</span>
     </slot>
   </PaginationEllipsis>
 </template>

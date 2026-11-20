@@ -10,7 +10,7 @@
             <UiInputGroupInput
               v-model="searchValue"
               class="cursor-pointer"
-              placeholder="搜索位置、地点"
+              :placeholder="t('mapSelect.search')"
               @input="onSearchChange($event.target.value ?? '')"
             />
 
@@ -44,8 +44,12 @@ import { throttle } from 'es-toolkit'
 import { filter, first, get, size, uniqueId } from 'es-toolkit/compat'
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import type { AMapSearchResult } from '.'
 import { AmapService } from './amapService'
+
+const { t } = useUiLocale()
 
 const props = withDefaults(
   defineProps<{
@@ -71,8 +75,7 @@ onBeforeUnmount(() => {
 
 const containerId = uniqueId('map-container-')
 const searchValue = ref('')
-
-const amapManager = new AmapService()
+const amapManager = new AmapService(() => t('mapSelect.dragged'))
 const searchList = ref<AMapSearchResult[]>([])
 
 // 是否有数据
@@ -128,7 +131,7 @@ async function initMap() {
         label: {
           offset: offset,
           direction: 'top',
-          content: '正在获取位置信息',
+          content: t('mapSelect.locating'),
         },
       },
       {
@@ -138,7 +141,7 @@ async function initMap() {
     )
     amapManager.geocoder(e.lnglat).then((res) => {
       markerMap.marker.setLabel({
-        content: get(res, 'regeocode.formattedAddress', '选择的位置'),
+        content: get(res, 'regeocode.formattedAddress', t('mapSelect.selected')),
       })
       markerMap.marker.setExtData({
         type: 'gencoder',
@@ -156,11 +159,11 @@ async function initMap() {
     searchList.value = []
     const marker = markerMap.marker
     marker.setLabel({
-      content: '正在获取位置信息',
+      content: t('mapSelect.locating'),
     })
     amapManager.geocoder(e.lnglat).then((res) => {
       markerMap.marker.setLabel({
-        content: get(res, 'regeocode.formattedAddress', '选择的位置'),
+        content: get(res, 'regeocode.formattedAddress', t('mapSelect.selected')),
       })
       markerMap.marker.setExtData({
         type: 'gencoder',

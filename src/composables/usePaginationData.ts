@@ -1,15 +1,51 @@
 import { debounce } from 'es-toolkit'
 import { computed, type MaybeRefOrGetter, onBeforeMount, ref, shallowRef, toValue } from 'vue'
 
+/** 原始分页参数：默认使用 current/size，接入项目时可替换为项目的参数类型，并同步调整 adapter */
+type OriPaginationParams = {
+  current: number
+  size: number
+}
+
+/** 原始分页数据：接入项目时可替换为项目的响应类型，并同步调整 adapter */
+type OriPaginationData<T> = {
+  current: number
+  records: T[]
+  total: number
+}
+
+/** 适配器分页数据 */
+interface AdapterPaginationData<T> {
+  current: number
+  records: T[]
+  total: number
+}
+
+/** 适配器 */
+const adapter = {
+  /**
+   * 获取分页参数
+   * @param current 页码
+   * @param size 每页大小
+   */
+  getPaginationParams: (current: number, size: number): OriPaginationParams => ({
+    current,
+    size,
+  }),
+  /**
+   * 获取分页数据
+   * @param res 分页数据
+   */
+  getPaginationData: <T>(res: OriPaginationData<T>): AdapterPaginationData<T> => res,
+}
+
 /**
  * 分页数据钩子
  * @param api 数据获取接口
  * @param opts 参数配置
  */
 export function usePaginationData<T>(
-  api:
-    | ((params: PaginationParams) => Promise<PaginationData<T>>)
-    | ((params: PaginationParams, data: any) => Promise<PaginationData<T>>),
+  api: (params: OriPaginationParams) => Promise<OriPaginationData<T>>,
   opts?: {
     /**
      * 请求参数
@@ -60,29 +96,18 @@ export function usePaginationData<T>(
   const fetchData = debounce(() => {
     status.value = 'pending'
 
-    const paginationParams = {
-      current: page.value,
-      size: pageSize,
-    }
+    const paginationParams = adapter.getPaginationParams(page.value, pageSize)
 
-    let promise: Promise<PaginationData<T>>
-    if (api.length === 2) {
-      promise = (api as (params: PaginationParams, data: any) => Promise<PaginationData<T>>)(
-        paginationParams,
-        filterFormData.value,
-      )
-    } else {
-      promise = (api as (params: PaginationParams) => Promise<PaginationData<T>>)({
-        ...paginationParams,
-        ...filterFormData.value,
-      })
-    }
-
-    promise
+    api({
+      ...paginationParams,
+      ...filterFormData.value,
+    })
       .then((res) => {
-        page.value = Number(res.current)
-        total.value = Number(res.total)
-        list.value = res.records
+        const adapterRes = adapter.getPaginationData(res)
+
+        page.value = Number(adapterRes.current)
+        total.value = Number(adapterRes.total)
+        list.value = adapterRes.records
 
         status.value = 'success'
       })

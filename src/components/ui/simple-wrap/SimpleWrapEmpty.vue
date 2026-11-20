@@ -1,5 +1,5 @@
 <template>
-  <UiEmptyApp v-bind="props" :description="description">
+  <UiEmptyApp v-bind="props" :description="description ?? t('common.noData')">
     <template v-if="$slots.media" #media><slot name="media" /></template>
     <template v-if="$slots.title" #title><slot name="title" /></template>
     <template v-if="$slots.description" #description><slot name="description" /></template>
@@ -9,9 +9,13 @@
 </template>
 
 <script lang="ts" setup>
+import { useUiLocale } from '@/components/ui/config-provider'
+
 import type { EmptyAppProps } from '../empty'
 
-const { description = '暂无数据', ...props } = defineProps<EmptyAppProps>()
+const { t } = useUiLocale()
+
+const { description, ...props } = defineProps<EmptyAppProps>()
 </script>
 
 <style lang="less" scoped></style>

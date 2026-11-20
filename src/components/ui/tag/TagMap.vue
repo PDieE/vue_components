@@ -3,14 +3,17 @@ import { cloneDeep } from 'es-toolkit'
 import { computed, nextTick, ref, watchEffect } from 'vue'
 
 import { getMapOption } from '@/lib/map'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { TagProps, MapOptionValue } from '.'
+
+const { t } = useUiLocale()
 
 const {
   value,
   options = [],
   api,
-  unknown = '未知',
+  unknown,
   strict = false,
   color,
   shape,
@@ -42,17 +45,11 @@ watchEffect(async () => {
   })
 })
 const optionList = ref<MapOption[]>([])
-const option = computed(() => {
-  let opt = getMapOption(optionList.value, value, strict)
-  if (!opt) {
-    opt = { label: unknown, value: '' }
-  }
-  return opt
-})
+const option = computed(() => getMapOption(optionList.value, value, strict))
 </script>
 
 <template>
-  <UiTag :color="option.color || color" :shape="shape" :border="border" :dot="dot">
-    {{ option.label }}
+  <UiTag :color="option?.color || color" :shape="shape" :border="border" :dot="dot">
+    {{ option?.label ?? unknown ?? t('common.unknown') }}
   </UiTag>
 </template>

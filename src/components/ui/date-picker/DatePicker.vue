@@ -9,6 +9,7 @@ import type { HtmlHTMLAttributes } from 'vue'
 
 import type { WheelPickerGroupColumn, WheelPickerValue } from '@/components/ui/wheel-picker'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { DisableDate } from '.'
 
@@ -29,9 +30,12 @@ const TIME_TOKEN_UNIT_MAP: Record<string, TimeUnit> = {
 }
 
 const modelValue = defineModel<string>()
+
+const { t, locale } = useUiLocale()
+
 const {
   valueFormat,
-  placeholder = '请选择日期',
+  placeholder,
   clearable = true,
   disabled = false,
   readonly = false,
@@ -328,7 +332,7 @@ const dateShow = computed(() => {
         :disabled="disabled"
       >
         <span :class="['flex-1 truncate', dateShow && 'text-foreground']">
-          {{ dateShow ? dateShow : placeholder }}
+          {{ dateShow ? dateShow : (placeholder ?? t('datePicker.placeholder')) }}
         </span>
         <CalendarIcon
           class="text-foreground-2 group-disabled:text-foreground-3"
@@ -350,7 +354,7 @@ const dateShow = computed(() => {
           :default-placeholder="defaultPlaceholder"
           disable-days-outside-current-view
           :is-date-disabled="isDateDisabled"
-          locale="zh-CN"
+          :locale="locale"
           @update:model-value="valueChanged"
         />
         <div v-if="hasTimePicker" class="flex flex-col border-l px-3 py-4">
@@ -364,7 +368,7 @@ const dateShow = computed(() => {
       </div>
       <div v-if="hasTimePicker" class="text-right p-2 border-t">
         <UiButton size="xs" theme="brand" :disabled="!innerValue" @click="confirm()">
-          确定
+          {{ t('common.ok') }}
         </UiButton>
       </div>
     </UiPopoverContent>

@@ -16,21 +16,27 @@
       will-change="transform,opacity"
     >
       <SketchPicker v-model="innerColor" class="p-0! shadow-none!" />
-      <UiButton theme="brand" size="xs" block @click="confirm()">确认</UiButton>
+      <UiButton theme="brand" size="xs" block @click="confirm()">{{
+        t('common.confirm')
+      }}</UiButton>
     </PopoverContent>
   </Popover>
 </template>
 
 <script setup lang="ts">
-import 'vue-color/style.css'
 import { Icon } from '@iconify/vue'
+
+import 'vue-color/style.css'
 import { cloneDeep } from 'es-toolkit'
 import { shallowRef, watch } from 'vue'
 import { SketchPicker } from 'vue-color'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import RichEditorButton from './RichEditorButton.vue'
+
+const { t } = useUiLocale()
 
 const {
   icon,

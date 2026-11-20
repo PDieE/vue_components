@@ -7,6 +7,9 @@ import type { HTMLAttributes } from 'vue'
 
 import type { ButtonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
+
+const { t } = useUiLocale()
 
 const props = withDefaults(
   defineProps<
@@ -37,7 +40,7 @@ const forwarded = useForwardProps(delegatedProps)
   >
     <slot>
       <ChevronRightIcon class="size-3" />
-      <span class="sr-only">Last page</span>
+      <span class="sr-only">{{ t('pagination.last') }}</span>
     </slot>
   </PaginationLast>
 </template>

@@ -7,6 +7,9 @@ import type { HTMLAttributes } from 'vue'
 
 import type { ButtonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
+
+const { t } = useUiLocale()
 
 const props = withDefaults(
   defineProps<
@@ -37,7 +40,7 @@ const forwarded = useForwardProps(delegatedProps)
   >
     <slot>
       <Icon class="size-4" icon="icon-park-outline:right" />
-      <span class="sr-only">Next page</span>
+      <span class="sr-only">{{ t('pagination.next') }}</span>
     </slot>
   </PaginationNext>
 </template>

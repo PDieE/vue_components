@@ -12,10 +12,13 @@ import {
 import type { HTMLAttributes } from 'vue'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 defineOptions({
   inheritAttrs: false,
 })
+
+const { t } = useUiLocale()
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DialogContentEmits>()
@@ -57,7 +60,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
           class="absolute top-4 right-4 p-0.5 transition-colors rounded-md hover:bg-secondary"
         >
           <X class="w-4 h-4" />
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ t('common.close') }}</span>
         </DialogClose>
       </DialogContent>
     </DialogOverlay>

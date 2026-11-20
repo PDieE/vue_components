@@ -5,6 +5,7 @@ import { computed, reactive, shallowRef, watch } from 'vue'
 
 import type { WheelPickerGroupColumn, WheelPickerValue } from '@/components/ui/wheel-picker'
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 type TimeUnit = 'hour' | 'minute' | 'second'
 type TimeToken = 'H' | 'HH' | 'm' | 'mm' | 's' | 'ss'
@@ -35,6 +36,8 @@ defineOptions({
   inheritAttrs: false,
 })
 
+const { t } = useUiLocale()
+
 const props = withDefaults(
   defineProps<{
     /** 展示格式，决定可选择的时间列 */
@@ -51,7 +54,6 @@ const props = withDefaults(
   }>(),
   {
     format: 'HH:mm:ss',
-    placeholder: '请选择时间',
     clearable: true,
     disabled: false,
   },
@@ -227,7 +229,7 @@ watch(
         :disabled="props.disabled"
       >
         <span :class="['flex-1 truncate', timeShow && 'text-foreground']">
-          {{ timeShow ? timeShow : props.placeholder }}
+          {{ timeShow ? timeShow : (props.placeholder ?? t('timePicker.placeholder')) }}
         </span>
         <Icon
           icon="icon-park-outline:time"
@@ -253,8 +255,10 @@ watch(
         />
       </div>
       <div class="flex justify-end gap-2 p-2 border-t">
-        <UiButton size="xs" variant="text" theme="brand" @click="selectNow()">此刻</UiButton>
-        <UiButton size="xs" theme="brand" @click="confirm()">确定</UiButton>
+        <UiButton size="xs" variant="text" theme="brand" @click="selectNow()">{{
+          t('timePicker.now')
+        }}</UiButton>
+        <UiButton size="xs" theme="brand" @click="confirm()">{{ t('common.ok') }}</UiButton>
       </div>
     </UiPopoverContent>
   </UiPopover>

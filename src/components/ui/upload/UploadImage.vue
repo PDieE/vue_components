@@ -29,8 +29,10 @@
           @keydown.enter.prevent="openFileDialog()"
           @keydown.space.prevent="openFileDialog()"
         >
-          <Icon icon="lucide:plus" class="size-5 text-[#64748b]" aria-hidden="true" />
-          <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">点击上传</span>
+          <Plus class="size-5 text-[#64748b]" aria-hidden="true" />
+          <span class="whitespace-nowrap text-sm font-medium text-[#64748b]">{{
+            t('upload.click')
+          }}</span>
         </div>
 
         <!-- 已上传图片/视频 -->
@@ -59,7 +61,7 @@
           <video
             v-if="getPreviewUrl(file) && isVideoFile(file)"
             :src="getPreviewUrl(file)"
-            :aria-label="file.name || '视频'"
+            :aria-label="file.name || t('upload.video')"
             class="pointer-events-none absolute inset-0 size-full rounded-[2px] bg-black object-cover"
             preload="metadata"
             muted
@@ -117,16 +119,13 @@
               v-if="file.status === 'success'"
               type="button"
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
-              :aria-label="isVideoFile(file) ? '播放视频' : '查看图片'"
+              :aria-label="isVideoFile(file) ? t('upload.playVideo') : t('upload.viewImage')"
               :disabled="disabled"
               @click.stop="open(index)"
               @keydown.enter.stop
               @keydown.space.stop
             >
-              <Icon
-                :icon="isVideoFile(file) ? 'icon-park-outline:play' : 'lucide:eye'"
-                class="size-4"
-              />
+              <Eye class="size-4" />
             </button>
 
             <!-- 状态：等待/失败 - 上传按钮 -->
@@ -140,7 +139,11 @@
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
               :disabled="disabled"
               :aria-label="
-                file.status === 'fail' ? '点击重试' : isVideoFile(file) ? '上传视频' : '上传图片'
+                file.status === 'fail'
+                  ? t('upload.retry')
+                  : isVideoFile(file)
+                    ? t('upload.uploadVideo')
+                    : t('upload.uploadImage')
               "
               @click.stop="upload(file)"
             >
@@ -158,10 +161,10 @@
               type="button"
               class="flex size-4 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-80"
               :disabled="disabled"
-              :aria-label="isVideoFile(file) ? '删除视频' : '删除图片'"
+              :aria-label="isVideoFile(file) ? t('upload.deleteVideo') : t('upload.deleteImage')"
               @click.stop="removeFile(file.id)"
             >
-              <Icon icon="lucide:trash" class="size-4" />
+              <Trash class="size-4" />
             </button>
           </div>
 
@@ -176,7 +179,7 @@
             @keydown.enter.stop
             @keydown.space.stop
           >
-            重新上传
+            {{ t('upload.replace') }}
           </UiButton>
         </div>
       </div>
@@ -201,6 +204,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { Eye, Plus, Trash } from '@lucide/vue'
 import { cloneDeep, isEqual, omit } from 'es-toolkit'
 import { imageDimensionsFromData } from 'image-dimensions'
 import { nanoid } from 'nanoid'
@@ -210,6 +214,7 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import { cn } from '@/lib/utils'
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { UploadFile } from '.'
 
@@ -239,6 +244,8 @@ watchDebounced(
   { immediate: true, debounce: 100, maxWait: 200 },
 )
 
+const { t } = useUiLocale()
+
 const {
   size = 80,
   sizeLimit = Infinity,
@@ -259,7 +266,7 @@ const {
   /** 触发上传的元素类名，默认为空字符串 */
   triggerClass?: HTMLAttributes['class']
   /** 每个元素的尺寸，数字表示宽高一致；数组第一个为宽，第二个为高。默认为 80 */
-  size?: number | [number, number] 
+  size?: number | [number, number]
   /** 上传文件大小限制，单位为字节 */
   sizeLimit?: number
   /** 图片最小尺寸限制，单位为像素 */
@@ -318,22 +325,26 @@ const acceptTip = computed(() => {
   const anyImageType =
     types.length === 1 &&
     (onlyType === '*/*' || (onlyType?.startsWith('image/') && onlyType.endsWith('/*')))
-  const formatted = types.map((item) => item.toUpperCase()).join('，')
-  const tips = [anyImageType ? '支持任意图片格式' : `支持${formatted}`]
+  const formatted = types.map((item) => item.toUpperCase()).join(t('upload.listSeparator'))
+  const tips = [anyImageType ? t('upload.anyImage') : t('upload.types', { types: formatted })]
   if (sizeLimit !== Infinity) {
-    tips.push(`文件大小不超过${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`)
+    tips.push(
+      t('upload.imageSizeLimit', {
+        size: prettyBytes(sizeLimit, { binary: true }).replace('i', ''),
+      }),
+    )
   }
   const { min, max } = imageSize.value ?? {}
   if (min) {
-    tips.push(`图片尺寸不小于 ${min.width}×${min.height}px`)
+    tips.push(t('upload.minDimensions', { width: min.width, height: min.height }))
   }
   if (max) {
-    tips.push(`图片尺寸不大于 ${max.width}×${max.height}px`)
+    tips.push(t('upload.maxDimensions', { width: max.width, height: max.height }))
   }
   if (imageRatio) {
-    tips.push(`图片比例 ${imageRatio[0]}:${imageRatio[1]}`)
+    tips.push(t('upload.aspectRatio', { width: imageRatio[0], height: imageRatio[1] }))
   }
-  return tips.join('；')
+  return tips.join(t('upload.tipSeparator'))
 })
 const progressCircumference = 2 * Math.PI * 14
 
@@ -389,7 +400,7 @@ async function addFiles(rawFiles: File[]) {
   const allowedFiles = selected.slice(0, remainingCount)
 
   if (!allowedFiles.length) {
-    warn(`文件数量不可超过 ${count} 份`)
+    warn(t('upload.maxCount', { count }))
     return
   }
 
@@ -435,12 +446,18 @@ async function addFiles(rawFiles: File[]) {
  */
 async function beforeUpload(file: File) {
   if (file.size > sizeLimit) {
-    warn(`${file.name} 超过 ${prettyBytes(sizeLimit, { binary: true }).replace('i', '')}`, file)
+    warn(
+      t('upload.sizeExceeded', {
+        name: file.name,
+        size: prettyBytes(sizeLimit, { binary: true }).replace('i', ''),
+      }),
+      file,
+    )
     return false
   }
 
   if (!acceptCheck(file)) {
-    warn(`${file.name} 的类型不符合要求`, file)
+    warn(t('upload.invalidType', { name: file.name }), file)
     return false
   }
 
@@ -527,24 +544,27 @@ async function imageSizeCheck(file: File) {
 
   const { min, max } = imageSize.value || {}
   if (min && image.width < min.width) {
-    warn(`${file.name} 宽度小于 ${min.width}px`, file)
+    warn(t('upload.minWidth', { name: file.name, width: min.width }), file)
     return false
   }
   if (min && image.height < min.height) {
-    warn(`${file.name} 高度小于 ${min.height}px`, file)
+    warn(t('upload.minHeight', { name: file.name, height: min.height }), file)
     return false
   }
   if (max && image.width > max.width) {
-    warn(`${file.name} 宽度大于 ${max.width}px`, file)
+    warn(t('upload.maxWidth', { name: file.name, width: max.width }), file)
     return false
   }
   if (max && image.height > max.height) {
-    warn(`${file.name} 高度大于 ${max.height}px`, file)
+    warn(t('upload.maxHeight', { name: file.name, height: max.height }), file)
     return false
   }
 
   if (imageRatio && image.width / image.height !== imageRatio[0] / imageRatio[1]) {
-    warn(`${file.name} 的比例不符合 ${imageRatio[0]}:${imageRatio[1]}`, file)
+    warn(
+      t('upload.invalidRatio', { name: file.name, width: imageRatio[0], height: imageRatio[1] }),
+      file,
+    )
     return false
   }
 
@@ -575,7 +595,7 @@ async function uploadOne(file: UploadFile) {
       previewMap.value.set(file.id, url)
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : '文件上传失败'
+    const message = error instanceof Error ? error.message : t('upload.failed')
     setFileState(file.id, { status: 'fail', percent: 0 })
     warn(message, file)
   }

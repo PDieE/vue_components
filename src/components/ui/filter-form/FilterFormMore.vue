@@ -1,11 +1,16 @@
 <script setup lang="ts" generic="TForm extends Record<string, any>, K extends keyof TForm">
 import { Icon } from '@iconify/vue'
+import { Filter } from '@lucide/vue'
 import { cloneDeep, pick } from 'es-toolkit'
+
+import { useUiLocale } from '@/components/ui/config-provider'
 
 import { useInjectFilterForm } from './context'
 
 // 在外部请使用 `<!-- @vue-generic {FilterForm,MoreFilterFormFields} -->` 来声明泛型，以便获取类型提示
 type TMoreForm = Pick<TForm, K>
+
+const { t } = useUiLocale()
 
 const { fields, size = 480 } = defineProps<{
   /** 更多筛选字段 */
@@ -54,21 +59,25 @@ function search() {
         :theme="open || moreCount > 0 ? 'brand' : 'default'"
         :size="!moreCount ? 'icon' : undefined"
       >
-        <template #icon><Icon icon="lucide:filter" /></template>
+        <template #icon><Filter class="size-4" /></template>
         <template v-if="moreCount">({{ moreCount }})</template>
       </UiButton>
     </UiPopoverTrigger>
     <UiPopoverContent class="p-0" :style="{ width: `min(100vw,${size}px)` }" align="start">
       <div class="px-5 py-4 flex border-b border-separator">
-        <div class="text-foreground flex-1">筛选项</div>
+        <div class="text-foreground flex-1">{{ t('filterForm.title') }}</div>
         <UiButton class="size-4 rounded" variant="ghost" size="icon-xs" @click="open = false">
           <template #icon><Icon class="size-3.5" icon="icon-park-outline:close" /></template>
         </UiButton>
       </div>
       <div class="px-5 py-4 grid grid-cols-2 gap-4"><slot :moreForm="form" /></div>
       <div class="px-5 py-4 flex gap-4 border-t border-separator">
-        <UiButton class="flex-1" variant="outline" @click="reset()">重置</UiButton>
-        <UiButton class="flex-1" theme="brand" @click="search()">查看结果</UiButton>
+        <UiButton class="flex-1" variant="outline" @click="reset()">{{
+          t('common.reset')
+        }}</UiButton>
+        <UiButton class="flex-1" theme="brand" @click="search()">{{
+          t('filterForm.results')
+        }}</UiButton>
       </div>
     </UiPopoverContent>
   </UiPopover>
