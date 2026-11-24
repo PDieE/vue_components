@@ -172,8 +172,8 @@
             v-if="count === 1 && file.status === 'success' && !readonly && !disabled"
             type="button"
             variant="ghost"
-            size="sm"
-            class="absolute bottom-3 left-1/2 z-2 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1 text-xs font-medium leading-5 text-white hover:bg-black/70 hover:text-white"
+            size="xs"
+            class="absolute bottom-1 left-1/2 z-2 h-auto -translate-x-1/2 rounded-full bg-black/60 px-2 py-1 text-xs leading-4 text-white hover:bg-black/70 hover:text-white"
             :disabled="disabled"
             @click.stop="openFileDialog()"
             @keydown.enter.stop
@@ -213,8 +213,8 @@ import type { HTMLAttributes } from 'vue'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 import type { UploadFile } from '.'
 

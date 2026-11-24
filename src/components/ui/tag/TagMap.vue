@@ -2,8 +2,8 @@
 import { cloneDeep } from 'es-toolkit'
 import { computed, nextTick, ref, watchEffect } from 'vue'
 
-import { getMapOption } from '@/lib/map'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { getMapOption } from '@/lib/map'
 
 import type { TagProps, MapOptionValue } from '.'
 

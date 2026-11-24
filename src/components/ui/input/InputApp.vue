@@ -4,8 +4,8 @@ import { cloneDeep, omit } from 'es-toolkit'
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 defineOptions({ inheritAttrs: false })
 

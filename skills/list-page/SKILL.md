@@ -4,7 +4,7 @@ description: 新建或调整 Vue 列表、表格页面时使用，默认项目�
 license: MIT
 metadata:
   author: github.com/PDieE
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # 列表页面模板
@@ -53,7 +53,8 @@ metadata:
 - 单一文本列的空值展示交给表格组件统一处理，不在页面添加 `|| '-'`、`?? '-'` 等兜底。多字段组合、业务状态说明及接口缺失字段的“暂缺”占位，仍按各自展示要求处理。
 - 筛选状态保存在 `filterForm`，直接传给 `usePaginationData(api, { params: filterForm })`；需要转换时在 `params` 内使用 getter 转换，不另建中间 `params` 变量。无筛选时可省略该配置。
 - 先确认钩子是否自动侦听筛选变更；没有自动查询时，输入框 `@change` / `@keydown.enter`、选项 `@change` 以及表单 `@reset` 均按需调用 `refresh()`，回到第一页查询。已有自动查询时沿用其机制，避免重复请求。
-- 筛选不展示上方 label，以 placeholder 说明用途；宽度直接设在组件自身；`UiFilterFormContent` 内不加查询按钮。
+- 筛选不展示上方 label，以 placeholder 说明用途；宽度直接设在组件自身。
+- 除非用户明确以文字要求添加查询按钮，否则筛选区域不得以任何形式添加查询按钮，包括文字按钮、仅图标按钮或输入框内的提交按钮。此规则适用于筛选内容、操作区及其旁侧。即使参考图中有查询按钮，也只按上面的筛选事件触发查询。
 - `UiPaginationApp` 使用 `v-model:page="currentPage"`（钩子返回的 `page` 别名）、`:total="total"`、`@change="change"`。固定每页条数时，`:items-per-page` 与钩子的 `pageSize` 保持一致，并设置 `:show-per-page-changer="false"`。
 - 如需可调整每页条数，先核对钩子的能力：若 `change` 只接收页码或 `pageSize` 不是响应式值，不可假定选择器能自动影响请求。确保选择的条数、请求大小和回到第一页的行为完整联动后再启用。
 - 不展示“当前展示 X 条数据”等条数提示，不添加独立错误状态展示分支。

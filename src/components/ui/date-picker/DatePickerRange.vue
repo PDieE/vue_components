@@ -8,8 +8,8 @@ import { cloneDeep } from 'es-toolkit'
 import type { DateRange } from 'reka-ui'
 import type { HtmlHTMLAttributes } from 'vue'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 const modelValue = defineModel<[string, string]>()
 

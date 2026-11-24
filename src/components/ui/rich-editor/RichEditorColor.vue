@@ -31,8 +31,8 @@ import { cloneDeep } from 'es-toolkit'
 import { shallowRef, watch } from 'vue'
 import { SketchPicker } from 'vue-color'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import RichEditorButton from './RichEditorButton.vue'
 

@@ -8,7 +8,7 @@ import { type ButtonVariants, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const { theme = 'brand', ...props } = defineProps<
-  AlertDialogActionProps & { class?: HTMLAttributes['class']; theme: ButtonVariants['theme'] }
+  AlertDialogActionProps & { class?: HTMLAttributes['class']; theme?: ButtonVariants['theme'] }
 >()
 
 const delegatedProps = reactiveOmit(props, 'class')

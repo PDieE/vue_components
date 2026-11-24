@@ -3,8 +3,8 @@ import { PanelLeft } from '@lucide/vue'
 import type { HTMLAttributes } from 'vue'
 
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 import { useSidebar } from './utils'
 

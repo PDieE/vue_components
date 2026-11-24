@@ -7,9 +7,9 @@ import dayjs from 'dayjs'
 import { cloneDeep } from 'es-toolkit'
 import type { HtmlHTMLAttributes } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import type { WheelPickerGroupColumn, WheelPickerValue } from '@/components/ui/wheel-picker'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { DisableDate } from '.'
 

@@ -6,11 +6,11 @@ import type { VirtualItem } from '@tanstack/vue-virtual'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { useEventListener } from '@vueuse/core'
 import type { ComponentPublicInstance, HTMLAttributes } from 'vue'
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import { valueUpdater } from '@/components/ui/table/utils'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { DataTableColumn, DataTableColumnMeta, DataTableColumnMetaSelectOptions } from '.'
 import { getAccessorKey, getCellEllipsisSlotName, getCellContent, getCellSlotName } from '.'
@@ -79,6 +79,16 @@ const tableColumns = computed<ColumnDef<TData, TValue>[]>(() => {
 
   return [leftFixedColumns, normalColumns, rightFixedColumns].flat()
 })
+/** 仅记录隐藏列，TanStack 默认显示其余列。 */
+const columnVisibility = computed(() =>
+  tableColumns.value.reduce<Record<string, boolean>>((visibility, column) => {
+    const columnId = getColumnId(column)
+    if (columnId && toValue(getMeta(column)?.visible) === false) {
+      visibility[columnId] = false
+    }
+    return visibility
+  }, {}),
+)
 const rowSelectOpts = computed<Required<DataTableColumnMetaSelectOptions<TData>>>(() => {
   const selectionColumn = tableColumns.value.find(isRowSelectionColumn)
   const selectOptions = getMeta(selectionColumn)?.selectOptions
@@ -104,7 +114,7 @@ const treeOpts = computed<DataTableTreeOptions<TData>>(() => ({
 }))
 /**
  * TanStack Table 实例。
- * 当前启用 core row model、row selection、固定列和基于 meta.visible 的初始显隐。
+ * 当前启用 core row model、row selection、固定列和基于 meta.visible 的列显隐。
  */
 const table = useVueTable({
   get data() {
@@ -133,21 +143,8 @@ const table = useVueTable({
     get expanded() {
       return expanded.value
     },
-    /**
-     * TanStack columnVisibility 采用 { [columnId]: boolean }：
-     * - 未出现在对象里的列默认可见，因此这里只收集 visible === false 的列。
-     * - 这样 meta.visible 不配置或配置为 true 时，都不会产生额外状态。
-     */
     get columnVisibility() {
-      return tableColumns.value.reduce<Record<string, boolean>>((visibility, column) => {
-        const columnId = getColumnId(column)
-
-        if (columnId && getMeta(column)?.visible === false) {
-          visibility[columnId] = false
-        }
-
-        return visibility
-      }, {})
+      return columnVisibility.value
     },
     get columnPinning() {
       return {
@@ -189,6 +186,7 @@ function getFixedColumnStyle(column: VisibleColumn) {
 /**
  * 获取表头插槽名称。
  * header 为字符串时使用标题本身，否则回退到列 id。
+ * @param header 表头实例
  */
 function getHeaderSlotName(
   header: ReturnType<typeof table.getHeaderGroups>[number]['headers'][number],

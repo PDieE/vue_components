@@ -3,9 +3,9 @@ import { Icon } from '@iconify/vue'
 import type { HTMLAttributes } from 'vue'
 import { computed, reactive, shallowRef, watch } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import type { WheelPickerGroupColumn, WheelPickerValue } from '@/components/ui/wheel-picker'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 type TimeUnit = 'hour' | 'minute' | 'second'
 type TimeToken = 'H' | 'HH' | 'm' | 'mm' | 's' | 'ss'

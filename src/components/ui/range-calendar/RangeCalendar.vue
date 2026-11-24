@@ -4,8 +4,8 @@ import type { RangeCalendarRootEmits, RangeCalendarRootProps } from 'reka-ui'
 import { RangeCalendarRoot, useForwardPropsEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 import {
   RangeCalendarCell,

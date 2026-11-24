@@ -1,4 +1,5 @@
 import type { Cell, ColumnDef, Row, RowData } from '@tanstack/vue-table'
+import type { MaybeRefOrGetter } from 'vue'
 
 export { default as DataTable } from './DataTable.vue'
 
@@ -16,8 +17,8 @@ export interface DataTableColumnMeta<TData extends RowData> {
   fixed?: 'left' | 'right'
   /** 单元格内容过长时是否使用省略展示。省略时会有Tooltip悬浮显示全部 */
   ellipsis?: boolean
-  /** 列是否可见，默认 true；只有传 false 时才会写入 TanStack columnVisibility。 */
-  visible?: boolean
+  /** 列是否可见，默认 true，支持布尔值、ref 和 getter。 */
+  visible?: MaybeRefOrGetter<boolean>
   /** 选择列配置，仅对 accessorKey: 'row-select' 生效。 */
   selectOptions?: DataTableColumnMetaSelectOptions<TData>
 }

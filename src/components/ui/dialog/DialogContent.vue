@@ -5,9 +5,9 @@ import type { DialogContentEmits, DialogContentProps } from 'reka-ui'
 import { DialogClose, DialogContent, DialogPortal, useForwardPropsEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import { isOverlayInteractExempt } from '@/lib/overlay'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import DialogOverlay from './DialogOverlay.vue'
 

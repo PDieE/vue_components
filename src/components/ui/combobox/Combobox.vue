@@ -14,10 +14,10 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
+import { useUiLocale } from '@/components/ui/config-provider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import UiTag from '@/components/ui/tag/Tag.vue'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { ComboboxChangeOption, ComboboxModelValue, ComboboxOption, ComboboxValue } from '.'
 

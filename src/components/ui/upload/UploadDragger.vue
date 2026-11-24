@@ -187,8 +187,8 @@ import type { HTMLAttributes } from 'vue'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 import type { UploadFile } from '.'
 import FileExcelIcon from './svg/file-excel.svg'

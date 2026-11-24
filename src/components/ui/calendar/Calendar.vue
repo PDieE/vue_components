@@ -7,9 +7,9 @@ import { createYear, createYearRange, toDate } from 'reka-ui/date'
 import type { HTMLAttributes, Ref } from 'vue'
 import { computed, toRaw, watch } from 'vue'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { cn } from '@/lib/utils'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import type { LayoutTypes } from '.'
 import {

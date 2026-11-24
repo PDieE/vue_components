@@ -2,6 +2,19 @@
 
 ### 🚀 Features
 
+- feat: [Components]修正`UiAlertDialogAction`组件`theme`参数的类型错误
+- feat: [Components]`UiDataTable`列配置里的`meta.visible`改为`MaybeRefOrGetter<boolean>`减少外部对`computed`的依赖
+- feat: [Components]`UiUploadImage`的`重新上传`按钮尺寸缩小
+- feat: [Skills]`list-page`优化对筛选区域的限制要求
+
+### 🐞 Bug Fixes
+
+### 🚧 Others
+
+# 2026-11-20
+
+### 🚀 Features
+
 - feat: 增加了内置多语言目前支持中文、英文（美国）两种语言
 - feat: [Components]新增 `UiConfigProvider`，通过语言代码切换中英文，默认使用简体中文。
 - feat: [Components]统一使用`@lucide/vue`图标库

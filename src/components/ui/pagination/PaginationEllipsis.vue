@@ -5,8 +5,8 @@ import type { PaginationEllipsisProps } from 'reka-ui'
 import { PaginationEllipsis } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
-import { cn } from '@/lib/utils'
 import { useUiLocale } from '@/components/ui/config-provider'
+import { cn } from '@/lib/utils'
 
 const { t } = useUiLocale()
 

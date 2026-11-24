@@ -2,6 +2,7 @@
 import type { DialogRootEmits, DialogRootProps } from 'reka-ui'
 import { useForwardPropsEmits } from 'reka-ui'
 
+import { useUiLocale } from '@/components/ui/config-provider'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useUiLocale } from '@/components/ui/config-provider'
 
 import Command from './Command.vue'
 
