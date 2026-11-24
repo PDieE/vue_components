@@ -1,0 +1,7 @@
+{
+  "projects": [".", "src/components/ui"],
+  "locales": ["zh-CN", "en-US"],
+  "usage": {
+    "exclude": ["src/components/ui/**"]
+  }
+}

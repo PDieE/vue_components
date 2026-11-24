@@ -11,6 +11,8 @@
 
 ### 🚧 Others
 
+- chore: 增加`x18n`配置
+
 # 2026-11-20
 
 ### 🚀 Features

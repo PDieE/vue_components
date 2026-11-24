@@ -1,6 +1,6 @@
 import type { UiMessages } from './types'
 
-export const enUS = {
+const enUS = {
   /** Shared messages */
   common: {
     cancel: 'Cancel',
@@ -149,3 +149,6 @@ export const enUS = {
     viewImage: 'View image',
   },
 } as const satisfies UiMessages
+
+export { enUS }
+export default enUS

@@ -1,0 +1,4 @@
+{
+  "locales": ["zh-CN", "en-US"],
+  "resources": [{ "pattern": "config-provider/locales/{locale}.ts" }]
+}

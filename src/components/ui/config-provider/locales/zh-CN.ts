@@ -1,4 +1,4 @@
-export const zhCN = {
+const zhCN = {
   /** 通用文案 */
   common: {
     cancel: '取消',
@@ -148,3 +148,6 @@ export const zhCN = {
     viewImage: '查看图片',
   },
 } as const
+
+export { zhCN }
+export default zhCN
